@@ -64,7 +64,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>11:30</td>
-            <td rowspan=3><a href="./day-01/lab01-configure-microsoft-defender.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
+            <td rowspan=3><a href="./day-01/lab01-defender-identity-cloud-app-security.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
             <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Build Hands-on: Configure Azure Sentinel + Microsoft Defender 365 (***)</a></td>
         </tr>
             <tr><td>11:45</td></tr>

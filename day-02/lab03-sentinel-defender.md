@@ -1,6 +1,7 @@
 # Configure Sentinel and Defender Integration
 
 - Configure Sentinel \ Log Analytics
+- Setup Defender Portal integrations
 - Perform queries
 - Setup Alerts
 - Perform Investigations

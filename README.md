@@ -1,4 +1,4 @@
-# Sentinel/Defender Workshop (Level 400, 2 days)
+Defender/# Sentinel Workshop (Level 400, 2 days)
 
 Event [preflight checklist](artifacts/environment-setup/README.md).
 
@@ -35,7 +35,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>09:15</td>
-            <td rowspan=4>Design Presentation: Microsoft 365 Defender for Identity</td>
+            <td rowspan=3>Design Presentation: Microsoft 365 Defender for EndPoint + Identity</td>
         </tr>
         <tr><td>09:30</td></tr>
         <tr>
@@ -44,15 +44,15 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>10:00</td>
-            <td rowspan=5>Design Presentation: Azure Sentinel + Microsoft Defender 365</td>
+            <td>Break</td>
+            <td rowspan=5>Design Presentation: Azure Sentinel + Microsoft Defender : Better Together!</td>
         </tr>
         <tr>
             <td>10:15</td>
-            <td rowspan=1>Break</td>
+            <td rowspan=4>Design Presentation: Microsoft 365 Defender - Cloud App Security</td>
         </tr>
         <tr>
             <td>10:30</td>
-            <td rowspan=4>Design Presentation: Microsoft 365 Defender - Cloud App Security</td>
         </tr>
         <tr>
             <td>10:45</td>
@@ -60,11 +60,10 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>11:00</td></tr>
         <tr>
             <td>11:15</td>
-            <td>Break</td>
+            <td rowspan=4><a href="./day-01/lab01-defender-identity-cloud-app-security.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
         </tr>
         <tr>
             <td>11:30</td>
-            <td rowspan=3><a href="./day-01/lab01-defender-identity-cloud-app-security.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
             <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Build Hands-on: Configure Azure Sentinel + Microsoft Defender 365 (***)</a></td>
         </tr>
             <tr><td>11:45</td></tr>
@@ -89,8 +88,8 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>14:00</td></tr>
         <tr>
             <td>14:15</td>
-            <td rowspan=4><a href="./day-01/lab02-attack-simulation.md">Hands-on: Microsoft Defender for Office 365(***)</a></td>
-            <td rowspan=4><a href="./day-02/lab04-sentinel-hunting.md">Hands-on: Sentinel Hunting (***)</a></td>
+            <td rowspan=4><a href="./day-01/lab02-defender-office-365.md">Hands-on: Microsoft Defender for Office 365(***)</a></td>
+            <td rowspan=4><a href="./day-02/lab04-sentinel-hunting.md">Hands-on: Azure Sentinel: Extending + Threat Hunting (***)</a></td>
         </tr>
         <tr><td>14:30</td></tr>
         <tr>

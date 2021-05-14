@@ -1,4 +1,4 @@
-Defender/# Sentinel Workshop (Level 400, 2 days)
+Defender 365/Sentinel Workshop (Level 400, 2 days)
 
 Event [preflight checklist](artifacts/environment-setup/README.md).
 

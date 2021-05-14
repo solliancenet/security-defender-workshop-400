@@ -14,28 +14,28 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td>Micorosft Defender</td>
-            <td>Azure Sentinel + Defender</td>
+            <td>Microsoft 365 Defender</td>
+            <td>Azure Sentinel + M365 Defender</td>
         </tr>
         <tr>
             <td>08:00</td>
-            <td rowspan=2>Keynote: Welcome, Objectives, Sentinel/Defender</td>
-            <td rowspan=4>Design Presentation: Azure Sentinel - Part I</td>
+            <td rowspan=2>Keynote: Welcome, Objectives, Sentinel+Microsoft Defender - Better together</td>
+            <td rowspan=4>Design Presentation: Azure Sentinel</td>
         </tr>
         <tr><td>08:15</td></tr>
         <tr>
             <td>08:30</td>
-            <td rowspan=2>Demo Walkthrough - Microsoft Defender</td>
+            <td rowspan=2>Demo Walkthrough - Microsoft 365 Defender Portals</td>
         </tr>
         <tr><td>08:45</td></tr>
         <tr>
             <td>09:00</td>
             <td>Break</td>
+            <td rowspan=2>Demo Walkthrough - Azure Sentinel</td>
         </tr>
         <tr>
             <td>09:15</td>
-            <td rowspan=4>Design Presentation: Microsoft Defender for Endpoint + Antivirus</td>
-            <td rowspan=2>Demo Walkthrough - Azure Sentinel</td>
+            <td rowspan=4>Design Presentation: Microsoft 365 Defender for Identity</td>
         </tr>
         <tr><td>09:30</td></tr>
         <tr>
@@ -44,25 +44,28 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>10:00</td>
-            <td rowspan=5>Design Presentation: Azure Sentinel - Part II</td>
+            <td rowspan=5>Design Presentation: Azure Sentinel + Microsoft Defender 365</td>
         </tr>
         <tr>
             <td>10:15</td>
-            <td rowspan=4>Q&A / Digital Cohort Activity: Microsoft Defender (**)</td>
+            <td rowspan=1>Break</td>
         </tr>
-        <tr><td>10:30</td></tr>
+        <tr>
+            <td>10:30</td>
+            <td rowspan=4>Design Presentation: Microsoft 365 Defender - Cloud App Security</td>
+        </tr>
         <tr>
             <td>10:45</td>
         </tr>
         <tr><td>11:00</td></tr>
-        <tr><td>11:15</td>
-            <td>Break</td>
+        <tr>
+            <td>11:15</td>
             <td>Break</td>
         </tr>
         <tr>
             <td>11:30</td>
-            <td rowspan=3><a href="./day-01/lab01-configure-microsoft-defender.md">Build Hands-on: Configure Microsoft Defender (***)</a></td>
-            <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Build Hands-on: Configure Azure Sentinel + Microsoft Defender (***)</a></td>
+            <td rowspan=3><a href="./day-01/lab01-configure-microsoft-defender.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
+            <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Build Hands-on: Configure Azure Sentinel + Microsoft Defender 365 (***)</a></td>
         </tr>
             <tr><td>11:45</td></tr>
             <tr><td>12:00</td></tr>
@@ -76,18 +79,17 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>13:00</td></tr>
         <tr>
             <td>13:15</td>
-            <td rowspan=2>Design Presentation: Attack Analysis (*)</td>
-            <td rowspan=4>Q&A / Digital Cohort Activity: Security Operations Center (**)</td>
+            <td rowspan=4>Design Presentation: Microsoft Defender for Office 365 (*)</td>
+            <td rowspan=4>Q&A / Digital Cohort Activity: Implementing a Security Operations Center (**)</td>
         </tr>
         <tr><td>13:30</td></tr>
         <tr>
             <td>13:45</td>
-            <td rowspan=2>Q&A / Digital Cohort Activity: Data Engineering Discussion (**)</td>
         </tr>
         <tr><td>14:00</td></tr>
         <tr>
             <td>14:15</td>
-            <td rowspan=4><a href="./day-01/lab02-attack-simulation.md">Hands-on: Attack Simulation(***)</a></td>
+            <td rowspan=4><a href="./day-01/lab02-attack-simulation.md">Hands-on: Microsoft Defender for Office 365(***)</a></td>
             <td rowspan=4><a href="./day-02/lab04-sentinel-hunting.md">Hands-on: Sentinel Hunting (***)</a></td>
         </tr>
         <tr><td>14:30</td></tr>

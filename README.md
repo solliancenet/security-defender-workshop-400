@@ -35,7 +35,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>09:15</td>
-            <td rowspan=3>Design Presentation: Azure Defender (File Integrity)</td>
+            <td rowspan=3>Design Presentation: Azure Defender (File Integrity + Container image scanning)</td>
         </tr>
         <tr><td>09:30</td></tr>
         <tr>
@@ -49,7 +49,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>10:15</td>
-            <td rowspan=4>Design Presentation: Azure Defender (Adaptive Application control + Adaptive Network hardening + Container image scanning)</td>
+            <td rowspan=4>Design Presentation: Azure Defender (Adaptive Application control + Adaptive Network hardening)</td>
         </tr>
         <tr>
             <td>10:30</td>

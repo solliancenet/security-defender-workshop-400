@@ -1,4 +1,4 @@
-Azure Defender/Sentinel Workshop (Level 400, 2 days)
+Defender 365/Sentinel Workshop (Level 400, 2 days)
 
 Event [preflight checklist](artifacts/environment-setup/README.md).
 
@@ -14,18 +14,18 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td>Azure Defender</td>
-            <td>Azure Sentinel + Azure Defender</td>
+            <td>Microsoft 365 Defender</td>
+            <td>Azure Sentinel + M365 Defender</td>
         </tr>
         <tr>
             <td>08:00</td>
-            <td rowspan=2>Keynote: Welcome, Objectives, Sentinel+ Azure Defender - Better together</td>
+            <td rowspan=2>Keynote: Welcome, Objectives, Sentinel+Microsoft Defender - Better together</td>
             <td rowspan=4>Design Presentation: Azure Sentinel</td>
         </tr>
         <tr><td>08:15</td></tr>
         <tr>
             <td>08:30</td>
-            <td rowspan=2>Demo Walkthrough - Azure Defender Solutions</td>
+            <td rowspan=2>Demo Walkthrough - Microsoft 365 Defender Portals</td>
         </tr>
         <tr><td>08:45</td></tr>
         <tr>
@@ -35,7 +35,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         </tr>
         <tr>
             <td>09:15</td>
-            <td rowspan=3>Design Presentation: Azure Defender (File Integrity)</td>
+            <td rowspan=3>Design Presentation: Microsoft 365 Defender for EndPoint + Identity</td>
         </tr>
         <tr><td>09:30</td></tr>
         <tr>
@@ -45,11 +45,11 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr>
             <td>10:00</td>
             <td>Break</td>
-            <td rowspan=5>Design Presentation: Azure Sentinel + Azure Defender : Better Together!</td>
+            <td rowspan=5>Design Presentation: Azure Sentinel + Microsoft Defender : Better Together!</td>
         </tr>
         <tr>
             <td>10:15</td>
-            <td rowspan=4>Design Presentation: Azure Defender (Adaptive Application control + Adaptive Network hardening + Container image scanning)</td>
+            <td rowspan=4>Design Presentation: Microsoft 365 Defender - Cloud App Security</td>
         </tr>
         <tr>
             <td>10:30</td>
@@ -60,11 +60,11 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>11:00</td></tr>
         <tr>
             <td>11:15</td>
-            <td rowspan=4><a href="./day-01/lab01-defender-identity-cloud-app-security.md">Hands-on: Azure Defender - Just-In-Time VM Access + File Integrity Monitoring + Container Image Scanning(***)</a></td>
+            <td rowspan=4><a href="./day-01/lab01-defender-identity-cloud-app-security.md">Hands-on: M365 Defender Identity and Cloud App Security (***)</a></td>
         </tr>
         <tr>
             <td>11:30</td>
-            <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Hands-on: Configure Azure Sentinel + Azure Defender (***)</a></td>
+            <td rowspan=3><a href="./day-02/lab03-sentinel-defender.md">Build Hands-on: Configure Azure Sentinel + Microsoft Defender 365 (***)</a></td>
         </tr>
             <tr><td>11:45</td></tr>
             <tr><td>12:00</td></tr>
@@ -78,7 +78,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>13:00</td></tr>
         <tr>
             <td>13:15</td>
-            <td rowspan=4>Design Presentation: Azure Defender (VM/SQL Vulnerability Assessments) (*)</td>
+            <td rowspan=4>Design Presentation: Microsoft Defender for Office 365 (*)</td>
             <td rowspan=4>Q&A / Digital Cohort Activity: Implementing a Security Operations Center (**)</td>
         </tr>
         <tr><td>13:30</td></tr>
@@ -88,7 +88,7 @@ Event [preflight checklist](artifacts/environment-setup/README.md).
         <tr><td>14:00</td></tr>
         <tr>
             <td>14:15</td>
-            <td rowspan=4><a href="./day-01/lab02-defender-office-365.md">Hands-on: Azure Defender (Adaptive application control, network hardening and vulnerability assessments) )(***)</a></td>
+            <td rowspan=4><a href="./day-01/lab02-defender-office-365.md">Hands-on: Microsoft Defender for Office 365(***)</a></td>
             <td rowspan=4><a href="./day-02/lab04-sentinel-hunting.md">Hands-on: Azure Sentinel: Extending + Threat Hunting (***)</a></td>
         </tr>
         <tr><td>14:30</td></tr>

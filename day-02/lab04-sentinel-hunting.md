@@ -26,8 +26,7 @@ You will execute an attack on your paw virtual machine that will do some not so 
 ### Task 1: Execute Attack
 
 1. Switch to your **paw-1** virtual machine
-2. Run the `.\artifacts\Attack.ps1`
-3. 
+2. Run the `.\artifacts\day-02\Attack.ps1`
 
 ## Exercise 2: Investigating alerts
 

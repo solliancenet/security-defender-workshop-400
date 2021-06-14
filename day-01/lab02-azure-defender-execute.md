@@ -13,30 +13,24 @@
 
 1. Switch to the Azure Portal.
 2. Search for Virtual Machines, then select it
-3. Select all virtual machines, then select **Services->Inventory**
-4. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
-5. Select **Enable**
-6. Select all virtual machines, then select **Services->Update Management**
-7. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
-8. Select **Enable**
-9. Search for and select **Azure Security Center**.
-10. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
-11. Select **Adaptive application controls**.
-12. If prompted, select **Try Application Whitelisting**
-
-  - If prompted, select your workspace, then click **Upgrade**
-  - Select **Continue without installing agents**
-
-13. You will likely have several groups displayed, find the one that has your newly created lab VMs.
-
-   ![Machine groupings is displayed.](media/securitycenter-grouping.png "Azure automatically created a group for your VMs")
-
-14. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
-
-   ![The discovered applications are displayed.](media/securitycenter-whitelistingrules.png "Notice the applications that were executed on the machine are displayed")
-
-15. In the top menu, select **Group settings**.
-16. Review the available settings.
+3. Select all virtual machines, then select **Services->Inventory**, ensure that all virtual machines are connected to the **wssecuritySUFFIX** workspace.  If not, do the following
+   1. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+   2. Select **Enable**
+4. Select all virtual machines, then select **Services->Update Management**, ensure that all virtual machines are connected to the **wssecuritySUFFIX** workspace.  If not, do the following
+   1. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+   2. Select **Enable**
+5. Search for and select **Azure Security Center**.
+6. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
+7. Select **Adaptive application controls**.
+8. If prompted, select **Try Application Whitelisting**
+   1. If prompted, select your workspace, then click **Upgrade**
+   2. Select **Continue without installing agents**
+9. You will likely have several groups displayed, find the one that has your newly created lab VMs.
+  ![Machine groupings is displayed.](media/securitycenter-grouping.png "Azure automatically created a group for your VMs")
+10. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
+  ![The discovered applications are displayed.](media/securitycenter-whitelistingrules.png "Notice the applications that were executed on the machine are displayed")
+11. In the top menu, select **Group settings**.
+12. Review the available settings.
 
 > **NOTE** As of June 2020, the **Enforce** option is temporarily disabled.
 
@@ -261,7 +255,17 @@
 
     ![The first four listed items are highlighted under Inbound security rules.](images/Hands-onlabstep-bystep-Azuresecurityprivacyandcomplianceimages/media/image17.png "View the inbound security rules set up by JIT Access")
 
-## Exercise 6: Azure Security Center Settings
+## Exercise 6: Clearing Recommendations
+
+### Task 1: Clearing Recommendations
+
+1. Switch to Azure Security Center
+2. Under **General**, select **Recommendations**
+3. Review your **Secure Score**
+4. Scroll down to the **Controls** section, review each of the recommendations
+5. Resolve as many controls and recommendations as possible.  Compare your scores to other workshop attendees.
+
+## Exercise 7: Azure Security Center Settings
 
 ### Task 1: Azure Defender Plans
 

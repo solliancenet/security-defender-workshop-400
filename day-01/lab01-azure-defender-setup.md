@@ -150,6 +150,14 @@ Synopsis: Azure Security Center provides several advanced security and threat de
 
     ![The management packs for the solutions are displayed.](media/loganalytics-mgmtpacks.png "Notice the solution management packs were downloaded")
 
+### Task 5: Connect Azure Activity Log
+
+1. Switch to the Azure Portal
+2. Browse to your **wssecuritySUFFIX** Log Analytics workspace
+3. Under **Workspace Data Sources**, select **Azure Activity Log**
+4. Select your lab **Subscription**
+5. Select **Connect**
+
 ## Reference Links
 
 - [Azure Security Center](https://docs.microsoft.com/en-us/azure/security-center/security-center-intro)

@@ -13,30 +13,24 @@
 
 1. Switch to the Azure Portal.
 2. Search for Virtual Machines, then select it
-3. Select all virtual machines, then select **Services->Inventory**
-4. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
-5. Select **Enable**
-6. Select all virtual machines, then select **Services->Update Management**
-7. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
-8. Select **Enable**
-9. Search for and select **Azure Security Center**.
-10. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
-11. Select **Adaptive application controls**.
-12. If prompted, select **Try Application Whitelisting**
-
-  - If prompted, select your workspace, then click **Upgrade**
-  - Select **Continue without installing agents**
-
-13. You will likely have several groups displayed, find the one that has your newly created lab VMs.
-
-   ![Machine groupings is displayed.](media/securitycenter-grouping.png "Azure automatically created a group for your VMs")
-
-14. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
-
-   ![The discovered applications are displayed.](media/securitycenter-whitelistingrules.png "Notice the applications that were executed on the machine are displayed")
-
-15. In the top menu, select **Group settings**.
-16. Review the available settings.
+3. Select all virtual machines, then select **Services->Inventory**, ensure that all virtual machines are connected to the **wssecuritySUFFIX** workspace.  If not, do the following
+   1. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+   2. Select **Enable**
+4. Select all virtual machines, then select **Services->Update Management**, ensure that all virtual machines are connected to the **wssecuritySUFFIX** workspace.  If not, do the following
+   1. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+   2. Select **Enable**
+5. Search for and select **Azure Security Center**.
+6. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
+7. Select **Adaptive application controls**.
+8. If prompted, select **Try Application Whitelisting**
+   1. If prompted, select your workspace, then click **Upgrade**
+   2. Select **Continue without installing agents**
+9. You will likely have several groups displayed, find the one that has your newly created lab VMs.
+  ![Machine groupings is displayed.](media/securitycenter-grouping.png "Azure automatically created a group for your VMs")
+10. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
+  ![The discovered applications are displayed.](media/securitycenter-whitelistingrules.png "Notice the applications that were executed on the machine are displayed")
+11. In the top menu, select **Group settings**.
+12. Review the available settings.
 
 > **NOTE** As of June 2020, the **Enforce** option is temporarily disabled.
 
@@ -123,7 +117,7 @@
 4. Select the checkbox to select all the virtual machines
 5. Select **Fix**
 6. Select the **Recommended...** radio button, then select **Proceed**
-7. In the dialog, select **Fix 6 resources**
+7. In the dialog, select **Fix X resources**
 
   > **Note** After a few hours, the agent will be installed on all selected machines and the assessment data will start to flow into the Security Center.
 
@@ -133,18 +127,19 @@
 
 1. Switch to the Azure Portal.
 2. Browse to the **wssecuritySUFFIX** Azure Database for SQL instance
-3. Under **Security**, select **Security Center**, you should see the recommendations and security alerts for the single SQL resource (if any)
-4. Select the **(Configure)** link
-5. Select the **Select storage account** link, then select the **wssecuritySUFFIX** storage account
-6. Select the **Enable Auditing for better threats investigation experience** link
-7. Toggle the **Enable Azure SQL Auditing** to **On**
-8. Select **Log Analytics** checkbox
-9. Select the **wssecuritySUFFIX** log analytics workspace
-10. Toggle the **Enable Auditing of Microsoft support operations** to **On**
-11. Select **Save**
-12. In the Azure Portal, open the Azure Security Center
-13. Under **Cloud Security**, select **Azure Defender**
-14. Scroll to the bottom, select **SQL Vulnerability Assessment**, you should see all servers across the subscription displayed.
+3. Under **Security**, select **Security Center**, if you see **Enable AZure Defender for SQL**, select it.
+4. After a few minutes, you should see the recommendations and security alerts for the single SQL resource (if any)
+5. Select the **(Configure)** link
+6. Select the **Select storage account** link, then select the **wssecuritySUFFIX** storage account
+7. Select the **Enable Auditing for better threats investigation experience** link
+8. Toggle the **Enable Azure SQL Auditing** to **On**
+9. Select **Log Analytics** checkbox
+10. Select the **wssecuritySUFFIX** log analytics workspace
+11. Toggle the **Enable Auditing of Microsoft support operations** to **On**
+12. Select **Save**
+13. In the Azure Portal, open the Azure Security Center
+14. Under **Cloud Security**, select **Azure Defender**
+15. Scroll to the bottom, select **SQL Vulnerability Assessment**, you should see all servers across the subscription displayed.
 
 ## Exercise 5: Container and Container Image Scanning
 
@@ -158,14 +153,14 @@
 6. Copy the username and password for later use
 7. Open a powerShell window, log in to the **wssecuritySUFFIX-linux-1** virtual machine by running the following:
 
-```bash
-ssh wsuser@10.0.0.5
-```
+  ```bash
+  ssh wsuser@10.0.0.5
+  ```
 
-6. When prompted, type `yes`, then enter the lab password
-7. In the new SSH session, run the following command. This will push an image to the container registry.
+8. When prompted, type `yes`, then enter the lab password
+9. In the new SSH session, run the following command. This will push an image to the container registry.
 
-  ```PowerShell
+  ```bash
   sudo apt-get update
 
   sudo apt-get install pass gnupg2
@@ -186,54 +181,35 @@ ssh wsuser@10.0.0.5
 
   sudo docker pull metal3d/xmrig:latest
 
-  sudo git clone https://github.com/bitcoin/bitcoin.git
+  sudo docker pull mcr.microsoft.com/dotnet/core/aspnet:2.1
 
-  sudo git clone https://github.com/daniel-lima/bitcoin-devenv
-
-  cd bitcoin-devenv
-
-  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml build
-
-  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml up -d
-
-  sudo docker exec -it bitcoin.windows bash
-
-  cd /projects/bitcoin
-
-  cd depends
-
-  sudo make HOST=x86_64-w64-mingw32
-
-  cd ..
-
-  sudo ./autogen.sh # not required when building from tarball
-
-  CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
-
-  sudo make
   ```
 
-7. Push the image to your Azure Container Registry, replace the name, username and password:
+10. Push the image to your Azure Container Registry, replace the name, username and password:
 
-```bash
- sudo docker login {acrName}.azurecr.io -u {username} -p {password}
+  ```bash
+  sudo docker login {acrName}.azurecr.io -u {username} -p {password}
 
- sudo docker tag bitcoin/windows {acrName}.azurecr.io/bitcoin/windows
+  sudo docker tag bitcoin/windows {acrName}.azurecr.io/bitcoin/windows
 
- sudo docker tag metal3d/xmrig {acrName}.azurecr.io/metal3d/xmrig
+  sudo docker tag metal3d/xmrig {acrName}.azurecr.io/metal3d/xmrig
 
- sudo docker push {acrName}.azurecr.io/bitcoin/windows
+  sudo docker tag mcr.microsoft.com/dotnet/core/aspnet:2.1 {acrName}.azurecr.io/dotnet/core/aspnet:2.1
 
- sudo docker push {acrName}.azurecr.io/metal3d/xmrig
+  sudo docker push {acrName}.azurecr.io/bitcoin/windows
 
-```
+  sudo docker push {acrName}.azurecr.io/metal3d/xmrig
 
-8. Switch to the Azure Portal, browse to the **wssecuritySUFFIX** Azure Container Registry
-9. Under **Services**, select **Repositories**, you should see the **bitcoin/windows** image displayed
-10. Under **Services**, select **Security**, ensure the setting is set to **On**
-11. Browse to **Azure Security Center**
-12. Under **Cloud Security**, select **Azure Defender**
-13. Select **Contain Image scanning**, you should see one or more recommendations displayed
+  sudo docker push {acrName}.azurecr.io/dotnet/core/aspnet:2.1
+
+  ```
+
+11. Switch to the Azure Portal, browse to the **wssecuritySUFFIX** Azure Container Registry
+12. Under **Services**, select **Repositories**, you should see the **bitcoin/windows** image displayed
+13. Under **Services**, select **Security**, ensure the setting is set to **On**
+14. Browse to **Azure Security Center**
+15. Under **Cloud Security**, select **Azure Defender**
+16. Select **Contain Image scanning**, you should see one or more recommendations displayed
 
 ## Exercise 6: Just In Time Access
 
@@ -279,7 +255,17 @@ ssh wsuser@10.0.0.5
 
     ![The first four listed items are highlighted under Inbound security rules.](images/Hands-onlabstep-bystep-Azuresecurityprivacyandcomplianceimages/media/image17.png "View the inbound security rules set up by JIT Access")
 
-## Exercise 6: Azure Security Center Settings
+## Exercise 6: Clearing Recommendations
+
+### Task 1: Clearing Recommendations
+
+1. Switch to Azure Security Center
+2. Under **General**, select **Recommendations**
+3. Review your **Secure Score**
+4. Scroll down to the **Controls** section, review each of the recommendations
+5. Resolve as many controls and recommendations as possible.  Compare your scores to other workshop attendees.
+
+## Exercise 7: Azure Security Center Settings
 
 ### Task 1: Azure Defender Plans
 
@@ -321,3 +307,32 @@ ssh wsuser@10.0.0.5
 
 - [Adaptive Application Controls](https://docs.microsoft.com/en-us/azure/security-center/security-center-adaptive-application)
 - [File Integrity Monitoring](https://docs.microsoft.com/en-us/azure/security-center/security-center-file-integrity-monitoring)
+
+<!--
+sudo git clone https://github.com/bitcoin/bitcoin.git
+
+  sudo git clone https://github.com/daniel-lima/bitcoin-devenv
+
+  cd bitcoin-devenv
+
+  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml build
+
+  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml up -d
+
+  sudo docker exec -it bitcoin.windows bash
+
+  cd /projects/bitcoin
+
+  cd depends
+
+  sudo make HOST=x86_64-w64-mingw32
+
+  cd ..
+
+  sudo ./autogen.sh # not required when building from tarball
+
+  CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
+
+  sudo make
+  
+-->

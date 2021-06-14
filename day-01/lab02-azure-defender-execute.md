@@ -123,7 +123,7 @@
 4. Select the checkbox to select all the virtual machines
 5. Select **Fix**
 6. Select the **Recommended...** radio button, then select **Proceed**
-7. In the dialog, select **Fix 6 resources**
+7. In the dialog, select **Fix X resources**
 
   > **Note** After a few hours, the agent will be installed on all selected machines and the assessment data will start to flow into the Security Center.
 
@@ -133,18 +133,19 @@
 
 1. Switch to the Azure Portal.
 2. Browse to the **wssecuritySUFFIX** Azure Database for SQL instance
-3. Under **Security**, select **Security Center**, you should see the recommendations and security alerts for the single SQL resource (if any)
-4. Select the **(Configure)** link
-5. Select the **Select storage account** link, then select the **wssecuritySUFFIX** storage account
-6. Select the **Enable Auditing for better threats investigation experience** link
-7. Toggle the **Enable Azure SQL Auditing** to **On**
-8. Select **Log Analytics** checkbox
-9. Select the **wssecuritySUFFIX** log analytics workspace
-10. Toggle the **Enable Auditing of Microsoft support operations** to **On**
-11. Select **Save**
-12. In the Azure Portal, open the Azure Security Center
-13. Under **Cloud Security**, select **Azure Defender**
-14. Scroll to the bottom, select **SQL Vulnerability Assessment**, you should see all servers across the subscription displayed.
+3. Under **Security**, select **Security Center**, if you see **Enable AZure Defender for SQL**, select it.
+4. After a few minutes, you should see the recommendations and security alerts for the single SQL resource (if any)
+5. Select the **(Configure)** link
+6. Select the **Select storage account** link, then select the **wssecuritySUFFIX** storage account
+7. Select the **Enable Auditing for better threats investigation experience** link
+8. Toggle the **Enable Azure SQL Auditing** to **On**
+9. Select **Log Analytics** checkbox
+10. Select the **wssecuritySUFFIX** log analytics workspace
+11. Toggle the **Enable Auditing of Microsoft support operations** to **On**
+12. Select **Save**
+13. In the Azure Portal, open the Azure Security Center
+14. Under **Cloud Security**, select **Azure Defender**
+15. Scroll to the bottom, select **SQL Vulnerability Assessment**, you should see all servers across the subscription displayed.
 
 ## Exercise 5: Container and Container Image Scanning
 
@@ -186,6 +187,8 @@ ssh wsuser@10.0.0.5
 
   sudo docker pull metal3d/xmrig:latest
 
+  sudo docker pull mcr.microsoft.com/dotnet/core/aspnet:2.1
+
   sudo git clone https://github.com/bitcoin/bitcoin.git
 
   sudo git clone https://github.com/daniel-lima/bitcoin-devenv
@@ -222,9 +225,13 @@ ssh wsuser@10.0.0.5
 
  sudo docker tag metal3d/xmrig {acrName}.azurecr.io/metal3d/xmrig
 
+ sudo docker tag mcr.microsoft.com/dotnet/core/aspnet:2.1 {acrName}.azurecr.io/dotnet/core/aspnet:2.1
+
  sudo docker push {acrName}.azurecr.io/bitcoin/windows
 
  sudo docker push {acrName}.azurecr.io/metal3d/xmrig
+
+ sudo docker push {acrName}.azurecr.io/dotnet/core/aspnet:2.1
 
 ```
 

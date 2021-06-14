@@ -12,22 +12,31 @@
 ### Task 1: Adaptive Application Controls
 
 1. Switch to the Azure Portal.
-2. Select **Azure Security Center**.
-3. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
-4. Select **Adaptive application controls**.
-5. If prompted, select **Try Application Whitelisting**
-   - If prompted, select your workspace, then click **Upgrade**
-   - Select **Continue without installing agents**
-6. You will likely have several groups displayed, find the one that has your newly created lab VMs.
+2. Search for Virtual Machines, then select it
+3. Select all virtual machines, then select **Services->Inventory**
+4. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+5. Select **Enable**
+6. Select all virtual machines, then select **Services->Update Management**
+7. Select the **CUSTOM...** radio button, then browse for your **wssecuritySUFFIX** log analytics workspace
+8. Select **Enable**
+9. Search for and select **Azure Security Center**.
+10. In the blade menu, scroll to the **Cloud Security** section and select **Azure Defender**
+11. Select **Adaptive application controls**.
+12. If prompted, select **Try Application Whitelisting**
+
+  - If prompted, select your workspace, then click **Upgrade**
+  - Select **Continue without installing agents**
+
+13. You will likely have several groups displayed, find the one that has your newly created lab VMs.
 
    ![Machine groupings is displayed.](media/securitycenter-grouping.png "Azure automatically created a group for your VMs")
 
-7. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
+14. Expand the **Publisher whitelisting rules** section, you should see that Google Chrome and Notepad++ were picked up and have Microsoft Certificated tied to them
 
    ![The discovered applications are displayed.](media/securitycenter-whitelistingrules.png "Notice the applications that were executed on the machine are displayed")
 
-8. In the top menu, select **Group settings**.
-9. Review the available settings.
+15. In the top menu, select **Group settings**.
+16. Review the available settings.
 
 > **NOTE** As of June 2020, the **Enforce** option is temporarily disabled.
 
@@ -104,9 +113,23 @@
 
     ![The file changes are displayed in the storage account.](media/fileintegrity-snapshots.png "The file changes are displayed in the storage account")
 
-## Exercise 3: SQL Vulnerability
+## Exercise 3: VM Vulnerability
 
-### Task 3: SQL Vulnerability
+### Task 1: VM Vulnerability
+
+1. Switch to the Azure Portal.
+2. Open the Azure Security Center
+3. Select **Azure Defender**, then scroll down and select **VM vulnerability assessment**
+4. Select the checkbox to select all the virtual machines
+5. Select **Fix**
+6. Select the **Recommended...** radio button, then select **Proceed**
+7. In the dialog, select **Fix 6 resources**
+
+  > **Note** After a few hours, the agent will be installed on all selected machines and the assessment data will start to flow into the Security Center.
+
+## Exercise 4: SQL Vulnerability
+
+### Task 1: SQL Vulnerability
 
 1. Switch to the Azure Portal.
 2. Browse to the **wssecuritySUFFIX** Azure Database for SQL instance
@@ -123,7 +146,7 @@
 13. Under **Cloud Security**, select **Azure Defender**
 14. Scroll to the bottom, select **SQL Vulnerability Assessment**, you should see all servers across the subscription displayed.
 
-## Exercise 4: Container and Container Image Scanning
+## Exercise 5: Container and Container Image Scanning
 
 ### Task 1: Container and Container Image Scanning
 
@@ -212,22 +235,16 @@ ssh wsuser@10.0.0.5
 12. Under **Cloud Security**, select **Azure Defender**
 13. Select **Contain Image scanning**, you should see one or more recommendations displayed
 
-## Exercise 5: Just In Time Access
+## Exercise 6: Just In Time Access
 
 ### Task 1: Just In Time Access
 
 1. In a browser, navigate to your Azure portal (<https://portal.azure.com>).
-
 2. Search for **Security Center**, select it
-  
 3. Under **Cloud Security** select **Azure Defender**.
-
 4. Scroll to the bottom, select **Just-in-time VM Access**
-
-5. Select the **Configured** tab, and verify the lab VMs (db-1, paw-1 and web-1) are displayed.  If not, select the **Not Configured** tab, and then check the checkbox to select the lab VMs (db-1, paw-1 and web-1), and then select the **Enable JIT on 3 VMs** link.
-
+5. Select the **Configured** tab, and verify the lab VMs are displayed.  If not, select the **Not Configured** tab, and then check the checkbox to select the lab VMs, and then select the **Enable JIT on X VMs** link.
 6. In the configuration window that opens, review the settings, then select **Save**.
-
 7. After a few minutes, you should see the virtual machines moved to the **Configured** tab.
 
 ### Task 2: Perform a JIT request

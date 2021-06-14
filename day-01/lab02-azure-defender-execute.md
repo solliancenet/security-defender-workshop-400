@@ -159,14 +159,14 @@
 6. Copy the username and password for later use
 7. Open a powerShell window, log in to the **wssecuritySUFFIX-linux-1** virtual machine by running the following:
 
-```bash
-ssh wsuser@10.0.0.5
-```
+  ```bash
+  ssh wsuser@10.0.0.5
+  ```
 
-6. When prompted, type `yes`, then enter the lab password
-7. In the new SSH session, run the following command. This will push an image to the container registry.
+8. When prompted, type `yes`, then enter the lab password
+9. In the new SSH session, run the following command. This will push an image to the container registry.
 
-  ```PowerShell
+  ```bash
   sudo apt-get update
 
   sudo apt-get install pass gnupg2
@@ -189,58 +189,33 @@ ssh wsuser@10.0.0.5
 
   sudo docker pull mcr.microsoft.com/dotnet/core/aspnet:2.1
 
-  sudo git clone https://github.com/bitcoin/bitcoin.git
-
-  sudo git clone https://github.com/daniel-lima/bitcoin-devenv
-
-  cd bitcoin-devenv
-
-  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml build
-
-  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml up -d
-
-  sudo docker exec -it bitcoin.windows bash
-
-  cd /projects/bitcoin
-
-  cd depends
-
-  sudo make HOST=x86_64-w64-mingw32
-
-  cd ..
-
-  sudo ./autogen.sh # not required when building from tarball
-
-  CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
-
-  sudo make
   ```
 
-7. Push the image to your Azure Container Registry, replace the name, username and password:
+10. Push the image to your Azure Container Registry, replace the name, username and password:
 
-```bash
- sudo docker login {acrName}.azurecr.io -u {username} -p {password}
+  ```bash
+  sudo docker login {acrName}.azurecr.io -u {username} -p {password}
 
- sudo docker tag bitcoin/windows {acrName}.azurecr.io/bitcoin/windows
+  sudo docker tag bitcoin/windows {acrName}.azurecr.io/bitcoin/windows
 
- sudo docker tag metal3d/xmrig {acrName}.azurecr.io/metal3d/xmrig
+  sudo docker tag metal3d/xmrig {acrName}.azurecr.io/metal3d/xmrig
 
- sudo docker tag mcr.microsoft.com/dotnet/core/aspnet:2.1 {acrName}.azurecr.io/dotnet/core/aspnet:2.1
+  sudo docker tag mcr.microsoft.com/dotnet/core/aspnet:2.1 {acrName}.azurecr.io/dotnet/core/aspnet:2.1
 
- sudo docker push {acrName}.azurecr.io/bitcoin/windows
+  sudo docker push {acrName}.azurecr.io/bitcoin/windows
 
- sudo docker push {acrName}.azurecr.io/metal3d/xmrig
+  sudo docker push {acrName}.azurecr.io/metal3d/xmrig
 
- sudo docker push {acrName}.azurecr.io/dotnet/core/aspnet:2.1
+  sudo docker push {acrName}.azurecr.io/dotnet/core/aspnet:2.1
 
-```
+  ```
 
-8. Switch to the Azure Portal, browse to the **wssecuritySUFFIX** Azure Container Registry
-9. Under **Services**, select **Repositories**, you should see the **bitcoin/windows** image displayed
-10. Under **Services**, select **Security**, ensure the setting is set to **On**
-11. Browse to **Azure Security Center**
-12. Under **Cloud Security**, select **Azure Defender**
-13. Select **Contain Image scanning**, you should see one or more recommendations displayed
+11. Switch to the Azure Portal, browse to the **wssecuritySUFFIX** Azure Container Registry
+12. Under **Services**, select **Repositories**, you should see the **bitcoin/windows** image displayed
+13. Under **Services**, select **Security**, ensure the setting is set to **On**
+14. Browse to **Azure Security Center**
+15. Under **Cloud Security**, select **Azure Defender**
+16. Select **Contain Image scanning**, you should see one or more recommendations displayed
 
 ## Exercise 6: Just In Time Access
 
@@ -328,3 +303,32 @@ ssh wsuser@10.0.0.5
 
 - [Adaptive Application Controls](https://docs.microsoft.com/en-us/azure/security-center/security-center-adaptive-application)
 - [File Integrity Monitoring](https://docs.microsoft.com/en-us/azure/security-center/security-center-file-integrity-monitoring)
+
+<!--
+sudo git clone https://github.com/bitcoin/bitcoin.git
+
+  sudo git clone https://github.com/daniel-lima/bitcoin-devenv
+
+  cd bitcoin-devenv
+
+  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml build
+
+  sudo docker-compose -f docker-compose.yml -f bitcoin/docker-compose.windows.yml up -d
+
+  sudo docker exec -it bitcoin.windows bash
+
+  cd /projects/bitcoin
+
+  cd depends
+
+  sudo make HOST=x86_64-w64-mingw32
+
+  cd ..
+
+  sudo ./autogen.sh # not required when building from tarball
+
+  CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
+
+  sudo make
+  
+-->

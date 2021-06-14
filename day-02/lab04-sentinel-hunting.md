@@ -11,6 +11,10 @@
 
 ## Notes
 
+- supply chain attack?
+  - modify container image
+  - upload a bitcoin miner image?
+
 - Send email with word document
 - embed macro in word document
 - have execute powershell script
@@ -52,6 +56,12 @@ TODO
 TODO
 
 1. TODO.
+
+### Task 4: Ask questions
+
+1. Who caused the attack to occur?
+2. What entities were involved?
+3. What was the steps of the attack?
 
 ## Exercise 3 : Use STIX and TAXII with Azure Sentinel
 

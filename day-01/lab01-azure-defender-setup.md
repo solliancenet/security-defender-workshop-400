@@ -1,10 +1,4 @@
-# Azure Defender
-
-- Topics
-  - Protect Identity on-premises and in the cloud
-  - Microsoft Defender for Identity
-  - Cloud App Security
-  - SaaS Protection and Integrations
+# Azure Security Center + Azure Defender Setup
 
 ## Exercise 1: Log Analytics Solutions with Azure Security Center
 

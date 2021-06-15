@@ -386,7 +386,6 @@ This task requires registration to gain access to an API Key. It can take a few 
 - Azure Sentinel Notebooks
 - [Enrich Azure Sentinel security incidents with the RiskIQ Intelligence Connector](https://techcommunity.microsoft.com/t5/azure-sentinel/enrich-azure-sentinel-security-incidents-with-the-riskiq/ba-p/1534412)
 
-
 # Resources
 
 - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/investigate-alerts?view=o365-worldwide

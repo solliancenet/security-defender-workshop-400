@@ -8,6 +8,7 @@
   - Troubleshoot
   - KQL UNIONs
   - SIEM Integration
+  - Create bookmarks...
 
 ## Notes
 
@@ -36,8 +37,10 @@ You will execute an attack on your paw virtual machine that will do some not so 
 2. Open a PowerShell window, run the following, please do not look at the script (it won't help you much anyway):
 
 ```PowerShell
-`.\artifacts\day-02\Attack.ps1`
+`.\artifacts\day-02\Attack_windows.ps1`
 ```
+
+> **Note** This script will execute some commands that were the result of a hacker gaining access to the credentials of an administrator.  It is up to you to determine how they did it through the next series of exercises.
 
 ## Exercise 2: Investigating Incidents and Alerts
 
@@ -71,13 +74,19 @@ The previous exercise created a breach in a system in your environment. You will
 
 1. TODO.
 
-### Task 5: Ask questions
+### Task 5: Go Hunting
+
+1. Open Azure Sentinel
+2. Under Threat Management, select **Hunting**
+3. 
+
+### Task 6: Ask questions
 
 1. Who caused the attack to occur?
 2. What entities were involved?
 3. What was the steps of the attack?
 
-### Task 6: Close the Incidents
+### Task 7: Close the Incidents
 
 1. For each incident, select it, then select the appropriate status (`closed`) with a classification (`true positive`).
 2. For the comment, type `User error in judgement`.

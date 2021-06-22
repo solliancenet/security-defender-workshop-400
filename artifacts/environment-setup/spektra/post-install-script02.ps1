@@ -19,31 +19,6 @@ Param (
   $deploymentId
 )
 
-function InstallGit()
-{
-  Write-Host "Installing Git." -ForegroundColor Green -Verbose
-
-  #download and install git...		
-  $output = "$env:TEMP\git.exe";
-  Invoke-WebRequest -Uri https://github.com/git-for-windows/git/releases/download/v2.27.0.windows.1/Git-2.27.0-64-bit.exe -OutFile $output; 
-
-  $productPath = "$env:TEMP";
-  $productExec = "git.exe"	
-  $argList = "/SILENT"
-  start-process "$productPath\$productExec" -ArgumentList $argList -wait
-
-}
-
-function InstallAzureCli()
-{
-  Write-Host "Installing Azure CLI." -ForegroundColor Green -Verbose
-
-  #install azure cli
-  Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi -usebasicparsing; 
-  Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; 
-  rm .\AzureCLI.msi
-}
-
 #Disable-InternetExplorerESC
 function DisableInternetExplorerESC
 {
@@ -65,29 +40,11 @@ function EnableIEFileDownload
   Set-ItemProperty -Path $HKCU -Name "1604" -Value 0 -ErrorAction SilentlyContinue -Verbose
 }
 
-#Create InstallAzPowerShellModule
-function InstallAzPowerShellModule
-{
-  Write-Host "Installing Azure PowerShell (NuGet)." -ForegroundColor Green -Verbose
-
-  Install-PackageProvider NuGet -Force
-  Set-PSRepository PSGallery -InstallationPolicy Trusted
-  Install-Module Az -Repository PSGallery -Force -AllowClobber
-}
-
-function InstallAzPowerShellModuleMSI
-{
-  Write-Host "Installing Azure PowerShell (MSI)." -ForegroundColor Green -Verbose
-  #download and install git...		
-  Invoke-WebRequest -Uri https://github.com/Azure/azure-powershell/releases/download/v4.5.0-August2020/Az-Cmdlets-4.5.0.33237-x64.msi -usebasicparsing -OutFile .\AzurePS.msi;
-  Start-Process msiexec.exe -Wait -ArgumentList '/I AzurePS.msi /quiet'; 
-  rm .\AzurePS.msi
-}
-
 #Create-LabFilesDirectory
 function CreateLabFilesDirectory
 {
   New-Item -ItemType directory -Path C:\LabFiles -force
+  New-Item -ItemType directory -Path C:\temp -force
 }
 
 #Create Azure Credential File on Desktop
@@ -172,7 +129,7 @@ $cred = new-object -typename System.Management.Automation.PSCredential -argument
 Connect-AzAccount -Credential $cred | Out-Null
  
 # Template deployment
-$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*-L400*" }).ResourceGroupName
+$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*AZDEFEND*" }).ResourceGroupName
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
 $branchName = "main";
@@ -189,12 +146,13 @@ $wclient.DownloadFile($url, $output)
 
 #download the git repo...
 Write-Host "Download Git repo." -ForegroundColor Green -Verbose
-git clone https://github.com/solliancenet/$workshopName.git synapse-ws-L400
+git clone https://github.com/solliancenet/$workshopName.git $workshopName
 
-cd './$workshopName/artifacts/environment-setup/automation'
+cd "./$workshopName/artifacts/environment-setup/automation"
 
 #update the updatedatafiles.ps1
 $content = get-content "c:\labfiles\$workshopName\artifacts\environment-setup\automation\updatedatafiles.ps1" -raw
+$content = $content.replace("#IN_WORKSHOP_NAME#",$workshopName);
 $content = $content.replace("#IN_USERNAME#",$userName);
 $content = $content.replace("#IN_WORKSPACE_NAME#",$wsName);
 $content = $content.replace("#IN_STORAGE_ACCOUNT_NAME#",$wsName);

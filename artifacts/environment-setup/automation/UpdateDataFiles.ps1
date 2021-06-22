@@ -15,9 +15,9 @@ function UpdateFile($fileName, $tokens)
     Set-Content $fileName $content;
 }
 
-$workshopName = "security-defender-workshop";
+$workshopName = "security-defender-workshop-400";
 
-cd C:\LabFiles\$workshopName\artifacts
+cd C:\LabFiles\"#IN_WORKSHOP_NAME#"\artifacts
 
 $ht = new-object System.Collections.Hashtable;
 $ht.add("#TODAY#",[DateTime]::NOW.ToString("yyyy-MM-dd"));
@@ -38,6 +38,7 @@ $ht.add("#APP_SVC_URL#", "#IN_APP_SVC_URL#");
 $ht.add("#IP_1#", "203.160.71.100"); #china
 $ht.add("#IP_2#", "80.89.137.214"); #russia
 $ht.add("#IP_3#", "117.82.191.160"); #china
+$ht.add("#WORKSHOP_NAME#", "#IN_WORKSHOP_NAME#");
 
 UpdateFile "Attack_linux.txt" $ht;
 UpdateFile "Attack_windows.txt" $ht;
@@ -48,9 +49,9 @@ UpdateFile "ExportLogsToStorage.ps1" $ht;
 UpdateFile "storage_post.ps1" $ht;
 UpdateFile "incident_post.ps1" $ht;
 
-UpdateFile "./logs-01/logs-01.log" $ht;
-UpdateFile "./logs-01/logs-02.log" $ht;
-UpdateFile "./logs-02/logs-03.log" $ht;
-UpdateFile "./logs-02/logs-04.log" $ht;
-UpdateFile "./logs-02/logs-05.log" $ht;
-UpdateFile "./logs-02/logs-06.log" $ht;
+UpdateFile "./day-02/logs-01/logs-01.log" $ht;
+UpdateFile "./day-02/logs-01/logs-02.log" $ht;
+UpdateFile "./day-02/logs-02/logs-03.log" $ht;
+UpdateFile "./day-02/logs-02/logs-04.log" $ht;
+UpdateFile "./day-02/logs-02/logs-05.log" $ht;
+UpdateFile "./day-02/logs-02/logs-06.log" $ht;

@@ -57,6 +57,7 @@ UpdateFile "./day-02/logs.json" $ht;
 UpdateFile "./day-02/Azure Sentinel ML.ipynb" $ht;
 UpdateFile "./day-02/aad_logons.pkl" $ht;
 UpdateFile "./day-02/webattack.ps1" $ht;
+UpdateFile "./day-02/riskiq-runbook.json" $ht;
 
 UpdateFile "./day-02/logs-01/logs-01.log" $ht;
 UpdateFile "./day-02/logs-01/logs-02.log" $ht;

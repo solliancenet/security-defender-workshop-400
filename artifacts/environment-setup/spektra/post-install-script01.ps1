@@ -124,6 +124,17 @@ Start-Transcript -Path C:\WindowsAzure\Logs\CloudLabsCustomScriptExtension.txt -
 mkdir "c:\temp" -ea SilentlyContinue;
 mkdir "c:\labfiles" -ea SilentlyContinue;
 
+#download the solliance pacakage
+$WebClient = New-Object System.Net.WebClient;
+$WebClient.DownloadFile("https://raw.githubusercontent.com/solliancenet/common-workshop/main/scripts/common.ps1","C:\LabFiles\common.ps1")
+$WebClient.DownloadFile("https://raw.githubusercontent.com/solliancenet/common-workshop/main/scripts/httphelper.ps1","C:\LabFiles\httphelper.ps1")
+
+#run the solliance package
+. C:\LabFiles\Common.ps1
+. C:\LabFiles\HttpHelper.ps1
+
+Set-Executionpolicy unrestricted -force
+
 DisableInternetExplorerESC
 
 EnableIEFileDownload
@@ -135,6 +146,8 @@ InstallDocker
 InstallGit
         
 InstallAzureCli
+
+InstallOffice
 
 Uninstall-AzureRm -ea SilentlyContinue
 
@@ -162,7 +175,10 @@ Connect-AzAccount -Credential $cred | Out-Null
 $resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*-L400*" }).ResourceGroupName
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
-$url = "https://raw.githubusercontent.com/solliancenet/security-defender-workshop-400/main/artifacts/environment-setup/spektra/deploy.parameters.post.json"
+$branchName = "main";
+$workshopName = "security-defender-workshop-400";
+
+$url = "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/spektra/deploy.parameters.post.json"
 $output = "c:\LabFiles\parameters.json";
 $wclient = New-Object System.Net.WebClient;
 $wclient.CachePolicy = new-object System.Net.Cache.RequestCachePolicy([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore);
@@ -172,16 +188,17 @@ $wclient.DownloadFile($url, $output)
 (Get-Content -Path "c:\LabFiles\parameters.json") | ForEach-Object {$_ -Replace "GET-DEPLOYMENT-ID", "$deploymentId"} | Set-Content -Path "c:\LabFiles\parameters.json"
 
 Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
-New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/security-defender-workshop-400/main/artifacts/environment-setup/automation/00-asa-workspace-core.json" -TemplateParameterFile "c:\LabFiles\parameters.json"
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "c:\LabFiles\parameters.json"
 
 #download the git repo...
 Write-Host "Download Git repo." -ForegroundColor Green -Verbose
-git clone https://github.com/solliancenet/security-defender-workshop-400.git synapse-ws-L400
+git clone https://github.com/solliancenet/$workshopName.git $workshopName
 
-cd './synapse-ws-L400/artifacts/environment-setup/automation'
+cd './$workshopName/artifacts/environment-setup/automation'
 
 #execute setup scripts
 Write-Host "Executing post scripts." -ForegroundColor Green -Verbose
+
 #./01-environment-setup.ps1
 #./03-environment-validate.ps1
 

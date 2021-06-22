@@ -121,6 +121,20 @@ Start-Transcript -Path C:\WindowsAzure\Logs\CloudLabsCustomScriptExtension.txt -
 [Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls" 
 
+mkdir "c:\temp" -ea SilentlyContinue;
+mkdir "c:\labfiles" -ea SilentlyContinue;
+
+#download the solliance pacakage
+$WebClient = New-Object System.Net.WebClient;
+$WebClient.DownloadFile("https://raw.githubusercontent.com/solliancenet/common-workshop/main/scripts/common.ps1","C:\LabFiles\common.ps1")
+$WebClient.DownloadFile("https://raw.githubusercontent.com/solliancenet/common-workshop/main/scripts/httphelper.ps1","C:\LabFiles\httphelper.ps1")
+
+#run the solliance package
+. C:\LabFiles\Common.ps1
+. C:\LabFiles\HttpHelper.ps1
+
+Set-Executionpolicy unrestricted -force
+
 DisableInternetExplorerESC
 
 EnableIEFileDownload
@@ -158,9 +172,10 @@ Connect-AzAccount -Credential $cred | Out-Null
 $resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*-L400*" }).ResourceGroupName
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
+$branchName = "main";
 $workshopName = "security-defender-workshop-400";
 
-$url = "https://raw.githubusercontent.com/solliancenet/$workshopName/master/artifacts/environment-setup/spektra/deploy.parameters.post.json"
+$url = "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/spektra/deploy.parameters.post.json"
 $output = "c:\LabFiles\parameters.json";
 $wclient = New-Object System.Net.WebClient;
 $wclient.CachePolicy = new-object System.Net.Cache.RequestCachePolicy([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore);

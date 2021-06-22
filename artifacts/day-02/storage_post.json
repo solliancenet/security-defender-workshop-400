@@ -1,0 +1,12 @@
+{
+    "properties": {
+        "destination": {
+            "resourceId": "/subscriptions/#SUBSCRIPTION_ID#/resourcegroups/#RESOURCE_GROUP_NAME#/providers/Microsoft.Storage/storageAccounts/#STORAGE_ACCOUNT_NAME#"
+        },
+        "tablenames": [
+            "AuditLogs",
+            "SigninLogs" 
+        ],
+        "enable": true
+    }
+}

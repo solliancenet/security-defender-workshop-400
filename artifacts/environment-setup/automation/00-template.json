@@ -1,0 +1,1840 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "uniqueSuffix": {
+      "type": "String",
+      "metadata": {
+        "description": "Suffix added to all resource name to make them unique."
+      }
+    },
+    "region": {
+      "type": "String",
+      "metadata": {
+        "description": "Region to deploy too."
+      }
+    },
+    "adminUsername": {
+      "type": "String",
+      "defaultValue": "wsuser",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "adminPassword": {
+      "type": "String",
+      "defaultValue": "Solliance123",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "azureUsername": {
+      "type": "string"
+    },
+    "azurePassword": {
+      "type": "string"
+    },
+    "odlId": {
+      "type": "string"
+    },
+    "deploymentId": {
+      "type": "string"
+    },
+    "vmSize": {
+      "defaultValue": "Standard_E2s_v3",
+      "type": "string"
+    },
+    "adVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2_v2",
+      "metadata": {
+        "description": "Size for the VM.  This sample uses premium disk and requires an 'S' sku."
+      }
+    },
+    "pdcRDPPort": {
+      "type": "int",
+      "metadata": {
+        "description": "The public RDP port for the PDC VM"
+      },
+      "defaultValue": 3389
+    },
+    "bdcRDPPort": {
+      "type": "int",
+      "metadata": {
+        "description": "The public RDP port for the BDC VM"
+      },
+      "defaultValue": 13389
+    },
+    "dnsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The DNS prefix for the public IP address used by the Load Balancer"
+      },
+      "defaultValue": "[concat('ad', parameters('uniqueSuffix'))]"
+    },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the AD Domain created "
+      },
+      "defaultValue": "[concat('ad', parameters('uniqueSuffix'), '.com')]"
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The github location"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "string",
+      "metadata": {
+        "description": "SAS key if needed"
+      },
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "domainJoinOptions": 3,
+    "ouPath": "",
+    "postInstallParameters": "[concat(' -azureUsername ', parameters('azureUsername'), ' -azurePassword ', parameters('azurePassword'), ' -azureTenantID ', variables('azureTenantID'), ' -azureSubscriptionID ', variables('azureSubscriptionID'), ' -odlId ', parameters('odlId'), ' -deploymentId ', parameters('deploymentId'))]",
+    "location": "[resourceGroup().location]",
+    "azureSubscriptionID": "[subscription().subscriptionId]",
+    "azureTenantID": "[subscription().tenantId]",
+    "rgName": "[resourceGroup().name]",
+    "resourceName": "[concat('wssecurity',parameters('uniqueSuffix'))]",
+    "automationMap": {
+      "eastus": { "region": "East US 2" },
+      "southcentralus": { "region": "South Central US" },
+      "westcentralus": { "region": "West Cental US" },
+      "westus2": { "region": "West US 2" },
+      "westus": { "region": "West US" }
+    },
+    "vmName": "[concat('labvm-',parameters('uniqueSuffix'))]",
+    "storageAccountType": "Premium_LRS",
+    "adPDCVMName": "[concat(variables('resourceName'),'-adPDC')]",
+    "adBDCVMName": "[concat(variables('resourceName'),'-adBDC')]",
+    "imagePublisher": "MicrosoftWindowsServer",
+    "imageOffer": "WindowsServer",
+    "imageSKU": "2016-Datacenter",
+    "adAvailabilitySetName": "[concat(variables('resourceName'),'-adset')]",
+    "publicIPAddressName": "[concat(variables('resourceName'),'-ad-pip')]",
+    "adLBFE": "LBFE",
+    "adLBBE": "LBBE",
+    "adPDCRDPNAT": "adPDCRDP",
+    "adBDCRDPNAT": "adBDCRDP",
+    "virtualNetworkName": "[concat(variables('resourceName'),'-ad')]",
+    "virtualNetworkAddressRange": "10.2.0.0/16",
+    "adSubnetName": "adSubnet",
+    "adSubnet": "10.2.0.0/24",
+    "adPDCNicName": "[concat(variables('resourceName'),'-adpdc-nic')]",
+    "adPDCNicIPAddress": "10.2.0.4",
+    "adBDCNicName": "[concat(variables('resourceName'),'-adbdc-nic')]",
+    "adBDCNicIPAddress": "10.2.0.5",
+    "adSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
+    "adLBName": "[concat(variables('resourceName'),'-adlb')]",
+    "adlbFEConfigID": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('adLBName'), variables('adLBFE'))]",
+    "adPDCRDPNATRuleID": "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('adPDCRDPNAT'))]",
+    "adBDCRDPNATRuleID": "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('adBDCRDPNAT'))]",
+    "adBEAddressPoolID": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('adLBName'), variables('adLBBE'))]",
+    "adDataDiskSize": 1000,
+    "vnetwithDNSTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet-with-dns-server.json',parameters('_artifactsLocationSasToken')))]",
+    "configureADBDCTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADBDC.json', parameters('_artifactsLocationSasToken')))]",
+    "adPDCModulesURL": "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADPDC.zip', parameters('_artifactsLocationSasToken')))]",
+    "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
+    "adBDCPreparationModulesURL": "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareADBDC.zip', parameters('_artifactsLocationSasToken')))]",
+    "adBDCPreparationFunction": "PrepareADBDC.ps1\\PrepareADBDC",
+    "adBDCConfigurationModulesURL": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigureADBDC.zip', parameters('_artifactsLocationSasToken')))]",
+    "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
+    "kubernetesClusterName": "[concat('wssecurity',parameters('uniqueSuffix'))]",
+    "kubernetesVersion": "1.19.9",
+      "kubernetesDnsPrefix": "[concat('wssecurity',parameters('uniqueSuffix'), '-dns')]",
+      "kubernetesAgentOsType": "Linux",
+      "kubernetesAgentOsDiskSizeGB": 0,
+      "kubernetesAgentCount": 2,
+      "kubernetesAgentVmSize": "Standard_D2_v2",
+      "kubernetesNetworkProfilePlugin": "kubenet",
+      "kubernetesRBACEnabled": true,
+      "logAnalyticsName": "[concat('wssecurity',parameters('uniqueSuffix'))]",
+      "logAnalyticsId": "[resourceId(resourceGroup().name, 'Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/tags",
+      "apiVersion": "2019-10-01",
+      "name": "default",
+      "dependsOn": [],
+      "properties": {
+        "tags": {
+          "DeploymentId": "[parameters('uniqueSuffix')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2021-01-01-preview",
+      "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+          
+      },
+      "sku": {
+          "name": "Standard",
+          "tier": "Standard",
+          "capacity": 1
+      },
+      "properties": {
+          "zoneRedundant": false,
+          "isAutoInflateEnabled": false,
+          "maximumThroughputUnits": 0,
+          "kafkaEnabled": true
+      }
+  },
+    {
+      "type": "Microsoft.ContainerService/managedClusters",
+      "apiVersion": "2020-03-01",
+      "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
+      ],
+      "properties": {
+          "kubernetesVersion": "[variables('kubernetesVersion')]",
+          "enableRBAC": "[variables('kubernetesRBACEnabled')]",
+          "dnsPrefix": "[variables('kubernetesDnsPrefix')]",
+          "agentPoolProfiles": [
+              {
+                  "name": "agentpool",
+                  "count": "[variables('kubernetesAgentCount')]",
+                  "osDiskSizeGB": "[variables('kubernetesAgentOsDiskSizeGB')]",
+                  "osType": "[variables('kubernetesAgentOsType')]",
+                  "vmSize": "[variables('kubernetesAgentVmSize')]",
+                  "storageProfile": "ManagedDisks",
+                  "type": "VirtualMachineScaleSets",
+                  "mode": "System"
+              }
+          ],
+          "networkProfile": {
+              "networkPlugin": "[variables('kubernetesNetworkProfilePlugin')]"
+          },
+          "addonProfiles": {
+              "httpApplicationRouting": {
+                  "enabled": false
+              },
+              "omsagent": {
+                  "enabled": true,
+                  "config": {
+                      "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsId')]"
+                  }
+              }
+          }
+      },
+      "identity": {
+          "type": "SystemAssigned"
+      }            
+  },
+    {
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2021-02-01-preview",
+      "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "v12.0",
+      "properties": {
+          "administratorLogin": "[parameters('adminUsername')]",
+          "administratorLoginPassword": "[parameters('adminPassword')]",
+          "version": "12.0",
+          "publicNetworkAccess": "Enabled",
+          "restrictOutboundNetworkAccess": "Disabled"
+      }
+  },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage",
+      "name": "[variables('resourceName')]",
+      "apiVersion": "2017-10-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "supportsHttpsTrafficOnly": "false",
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Devices/IotHubs",
+      "apiVersion": "2020-03-01",
+      "name": "[concat(variables('resourceName'),'-iothub')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {
+        "ipFilterRules": [],
+        "eventHubEndpoints": {
+          "events": {
+            "retentionTimeInDays": 1,
+            "partitionCount": 4
+          }
+        },
+        "routing": {
+          "endpoints": {
+            "serviceBusQueues": [],
+            "serviceBusTopics": [],
+            "eventHubs": [],
+            "storageContainers": []
+          },
+          "routes": [],
+          "fallbackRoute": {
+            "name": "$fallback",
+            "source": "DeviceMessages",
+            "condition": "true",
+            "endpointNames": ["events"],
+            "isEnabled": true
+          }
+        },
+        "storageEndpoints": {
+          "$default": {
+            "sasTtlAsIso8601": "PT1H",
+            "connectionString": null,
+            "containerName": null
+          }
+        },
+        "messagingEndpoints": {
+          "fileNotifications": {
+            "lockDurationAsIso8601": "PT1M",
+            "ttlAsIso8601": "PT1H",
+            "maxDeliveryCount": 10
+          }
+        },
+        "enableFileUploadNotifications": false,
+        "cloudToDevice": {
+          "maxDeliveryCount": 10,
+          "defaultTtlAsIso8601": "PT1H",
+          "feedback": {
+            "lockDurationAsIso8601": "PT1M",
+            "ttlAsIso8601": "PT1H",
+            "maxDeliveryCount": 10
+          }
+        },
+        "features": "None"
+      }
+    },
+    {
+      "type": "Microsoft.Devices/provisioningServices",
+      "apiVersion": "2017-11-15",
+      "name": "[concat(variables('resourceName'),'-prov')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {
+        "iotHubs": []
+      }
+    },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2018-05-01-preview",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "IbizaWebAppExtensionCreate",
+        "RetentionInDays": 90,
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('resourceName'),'-kv')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [],
+        "enabledForDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true,
+        "enableSoftDelete": true
+      }
+    },
+    {
+      "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "apiVersion": "2020-05-01",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "customRules": [],
+        "policySettings": {
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128,
+          "fileUploadLimitInMb": 100,
+          "state": "Enabled",
+          "mode": "Detection"
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.0",
+              "ruleGroupOverrides": []
+            }
+          ],
+          "exclusions": []
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-pip')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "ipAddress": "52.142.16.152",
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-ad')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[variables('location')]",
+      "apiVersion": "2020-03-01",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": ["[variables('virtualNetworkAddressRange')]"]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('adSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('adSubnet')]"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "name": "ad-to-hub",
+            "properties": {
+              "peeringState": "Connected",
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-hub'))]"
+              },
+              "allowVirtualNetworkAccess": true,
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": true,
+              "useRemoteGateways": false,
+              "remoteAddressSpace": {
+                "addressPrefixes": ["10.0.0.0/16"]
+              }
+            }
+          }
+        ]
+      },
+      "resources": [
+        {
+          "apiVersion": "2020-05-01",
+          "type": "virtualNetworkPeerings",
+          "name": "ad-to-hub",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-ad'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-hub'))]"
+          ],
+          "comments": "ad to hub",
+          "properties": {
+            "allowVirtualNetworkAccess": true,
+            "allowForwardedTraffic": true,
+            "allowGatewayTransit": true,
+            "useRemoteGateways": false,
+            "remoteVirtualNetwork": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-hub'))]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-hub')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": ["10.0.0.0/16", "10.1.0.0/16"]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.0.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "gateway",
+            "properties": {
+              "addressPrefix": "10.1.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      },
+      "resources": [
+        {
+          "apiVersion": "2020-05-01",
+          "type": "virtualNetworkPeerings",
+          "name": "hub-to-ad",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-ad'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-hub'))]"
+          ],
+          "comments": "hub to ad",
+          "properties": {
+            "allowVirtualNetworkAccess": true,
+            "allowForwardedTraffic": true,
+            "allowGatewayTransit": true,
+            "useRemoteGateways": false,
+            "remoteVirtualNetwork": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-ad'))]"
+            }
+          }
+        },
+        {
+          "apiVersion": "2020-05-01",
+          "type": "virtualNetworkPeerings",
+          "name": "hub-to-web",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-web'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-hub'))]"
+          ],
+          "comments": "hub to web",
+          "properties": {
+            "allowVirtualNetworkAccess": true,
+            "allowForwardedTraffic": true,
+            "allowGatewayTransit": true,
+            "useRemoteGateways": false,
+            "remoteVirtualNetwork": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-web'))]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-web')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": ["10.3.0.0/16"]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.3.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "name": "web-to-hub",
+            "properties": {
+              "peeringState": "Connected",
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-hub'))]"
+              },
+              "allowVirtualNetworkAccess": true,
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": true,
+              "useRemoteGateways": false,
+              "remoteAddressSpace": {
+                "addressPrefixes": ["10.0.0.0/16"]
+              }
+            }
+          }
+        ],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      },
+      "resources": [
+        {
+          "apiVersion": "2020-05-01",
+          "type": "virtualNetworkPeerings",
+          "name": "web-to-hub",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-web'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-hub'))]"
+          ],
+          "comments": "web to hub",
+          "properties": {
+            "allowVirtualNetworkAccess": true,
+            "allowForwardedTraffic": true,
+            "allowGatewayTransit": true,
+            "useRemoteGateways": false,
+            "remoteVirtualNetwork": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-hub'))]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/linkedServices",
+      "apiVersion": "2015-11-01-preview",
+      "name": "[concat(variables('resourceName'), '/' , 'Automation')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "resourceId": "[resourceId('Microsoft.Automation/automationAccounts', variables('resourceName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Automation/automationAccounts', variables('resourceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiVersion": "2015-10-31",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('automationMap')[variables('location')].region]",
+      "properties": {
+        "sku": {
+          "name": "Basic"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiVersion": "2015-10-31",
+      "name": "[concat(variables('resourceName'), '-eus2')]",
+      "location": "eastus2",
+      "properties": {
+        "sku": {
+          "name": "Basic"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2019-05-01",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [],
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "adminUserEnabled": true
+      }
+    },
+    {
+      "type": "Microsoft.MachineLearningServices/workspaces",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('resourceName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', concat(variables('resourceName'), '-kv'))]",
+        "[resourceId('Microsoft.Insights/components', variables('resourceName'))]",
+        "[resourceId('Microsoft.ContainerRegistry/registries', variables('resourceName'))]"
+      ],
+      "sku": {
+        "tier": "Basic",
+        "name": "Basic"
+      },
+      "identity": {
+        "type": "systemAssigned"
+      },
+      "properties": {
+        "friendlyName": "[variables('resourceName')]",
+        "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', variables('resourceName'))]",
+        "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', variables('resourceName'))]",
+        "keyVault": "[resourceId('Microsoft.KeyVault/vaults', concat(variables('resourceName'), '-kv'))]",
+        "applicationInsights": "[resourceId('microsoft.insights/components', variables('resourceName'))]"
+      }
+    },
+    {
+      "type": "microsoft.operationalinsights/workspaces",
+      "apiVersion": "2020-03-01-preview",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "name": "pergb2018"
+        },
+        "retentionInDays": 30,
+        "workspaceCapping": {
+          "dailyQuotaGb": -1
+        },
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[concat(variables('resourceName'),'-sf')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "P1v2",
+        "tier": "PremiumV2",
+        "size": "P1v2",
+        "family": "Pv2",
+        "capacity": 1
+      },
+      "kind": "app",
+      "properties": {
+        "perSiteScaling": false,
+        "maximumElasticWorkerCount": 1,
+        "isSpot": false,
+        "reserved": false,
+        "isXenon": false,
+        "hyperV": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-hub', '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'), '-hub'))]"
+      ],
+      "properties": {
+        "addressPrefix": "10.0.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-hub', '/gateway')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'), '-hub'))]"
+      ],
+      "properties": {
+        "addressPrefix": "10.1.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-web', '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'), '-web'))]"
+      ],
+      "properties": {
+        "addressPrefix": "10.3.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2018-11-01",
+      "name": "[variables('resourceName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', concat(variables('resourceName'),'-sf'))]"
+      ],
+      "kind": "app",
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('resourceName'), '.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('resourceName'), '.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(variables('resourceName'),'-sf'))]",
+        "reserved": false,
+        "isXenon": false,
+        "hyperV": false,
+        "siteConfig": {},
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "httpsOnly": false,
+        "redundancyMode": "None"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2018-11-01",
+      "name": "[concat(variables('resourceName'),'/web')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('resourceName'))]"
+      ],
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "[concat('$', variables('resourceName'))]",
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": true,
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+          }
+        ],
+        "loadBalancing": "LeastRequests",
+        "experiments": {
+          "rampUpRules": []
+        },
+        "autoHealEnabled": false,
+        "localMySqlEnabled": false,
+        "ipSecurityRestrictions": [
+          {
+            "ipAddress": "Any",
+            "action": "Allow",
+            "priority": 1,
+            "name": "Allow all",
+            "description": "Allow all access"
+          }
+        ],
+        "scmIpSecurityRestrictions": [
+          {
+            "ipAddress": "Any",
+            "action": "Allow",
+            "priority": 1,
+            "name": "Allow all",
+            "description": "Allow all access"
+          }
+        ],
+        "scmIpSecurityRestrictionsUseMain": false,
+        "http20Enabled": false,
+        "minTlsVersion": "1.2",
+        "ftpsState": "AllAllowed",
+        "reservedInstanceCount": 0
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "apiVersion": "2018-11-01",
+      "name": "[concat(variables('resourceName'), '/', variables('resourceName'), '.azurewebsites.net')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('resourceName'))]"
+      ],
+      "properties": {
+        "siteName": "[variables('resourceName')]",
+        "hostNameType": "Verified"
+      }
+    },
+    {
+      "type": "Microsoft.Network/applicationGateways",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-ag')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'), '-hub'), 'gateway')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('resourceName'), '-pip'))]"
+      ],
+      "properties": {
+        "sku": {
+          "name": "WAF_v2",
+          "tier": "WAF_v2",
+          "capacity": 2
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'),'-hub'), 'gateway')]"
+              }
+            }
+          }
+        ],
+        "sslCertificates": [],
+        "trustedRootCertificates": [],
+        "frontendIPConfigurations": [
+          {
+            "name": "appGwPublicFrontendIp",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('resourceName'), '-pip'))]"
+              }
+            }
+          },
+          {
+            "name": "appGwPrivateFrontendIp",
+            "properties": {
+              "privateIPAddress": "10.1.0.6",
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'),'-hub'), 'gateway')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "port_80",
+            "properties": {
+              "port": 80
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[concat(variables('resourceName'), 'bep')]",
+            "properties": {
+              "backendAddresses": [
+                {
+                  "ipAddress": "10.2.0.6"
+                }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "[concat(variables('resourceName'), 'httpsetting')]",
+            "properties": {
+              "port": 80,
+              "protocol": "Http",
+              "cookieBasedAffinity": "Disabled",
+              "pickHostNameFromBackendAddress": false,
+              "requestTimeout": 20
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "[concat(variables('resourceName'), 'listener')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', concat(variables('resourceName'),'-ag')), '/frontendIPConfigurations/appGwPublicFrontendIp')]"
+              },
+              "frontendPort": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', concat(variables('resourceName'),'-ag')), '/frontendPorts/port_80')]"
+              },
+              "protocol": "Http",
+              "hostNames": [],
+              "requireServerNameIndication": false
+            }
+          }
+        ],
+        "urlPathMaps": [],
+        "requestRoutingRules": [
+          {
+            "name": "[variables('resourceName')]",
+            "properties": {
+              "ruleType": "Basic",
+              "httpListener": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', concat(variables('resourceName'),'-ag')), '/httpListeners/', concat(variables('resourceName'), 'listener'))]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', concat(variables('resourceName'),'-ag')), '/backendAddressPools/', concat(variables('resourceName'), 'bep'))]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', concat(variables('resourceName'),'-ag')), '/backendHttpSettingsCollection/', concat(variables('resourceName'), 'httpsetting'))]"
+              }
+            }
+          }
+        ],
+        "probes": [],
+        "rewriteRuleSets": [],
+        "redirectConfigurations": [],
+        "privateLinkConfigurations": [],
+        "webApplicationFirewallConfiguration": {
+          "enabled": true,
+          "firewallMode": "Detection",
+          "ruleSetType": "OWASP",
+          "ruleSetVersion": "3.0",
+          "disabledRuleGroups": [],
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128,
+          "fileUploadLimitInMb": 100
+        },
+        "enableHttp2": false
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-10-01",
+      "name": "[concat(variables('resourceName'),'-win10')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+          "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('resourceName'),'-win10-nic'))]",
+          "[resourceId('Microsoft.Storage/StorageAccounts', variables('resourceName'))]"
+      ],
+      "resources": [
+          {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "name": "[concat(variables('resourceName'),'-win10','/', 'winExtension')]",
+              "apiVersion": "2015-06-15",
+              "location": "[resourceGroup().location]",
+              "comments": "Script",
+              "tags": {
+              "displayName": "VM Extension"
+              },
+              "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', variables('resourceName'),'-win10')]"
+              ],
+              "properties": {
+              "publisher": "Microsoft.Compute",
+              "type": "CustomScriptExtension",
+              "typeHandlerVersion": "1.8",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                  "fileUris": [
+                  "https://raw.githubusercontent.com/Microsoft/microsoft-defender-workshop-400-public/main/environment-setup/spektra/post-install-script01.ps1"
+                  ]
+              },
+              "protectedSettings": {
+                  "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File post-install-script01.ps1', variables('postInstallParameters'))]"
+              }
+          }
+      }],
+      "properties": {
+          "hardwareProfile": {
+              "vmSize": "Standard_D2s_v3"
+          },
+          "storageProfile": {
+              "imageReference": {
+                  "publisher": "MicrosoftWindowsDesktop",
+                  "offer": "Windows-10",
+                  "sku": "20h1-pro-g2",
+                  "version": "latest"
+                },
+              "osDisk": {
+                  "osType": "Windows",
+                  "name": "[concat(variables('resourceName'),'-win10', '_OsDisk')]",
+                  "createOption": "FromImage",
+                  "caching": "ReadWrite",
+                  "managedDisk": {
+                      "storageAccountType": "Premium_LRS"                            
+                  },
+                  "diskSizeGB": 127
+              },
+              "dataDisks": []
+          },
+          "osProfile": {
+              "computerName": "win10",
+              "adminUsername": "[parameters('adminUsername')]",
+              "adminPassword": "[parameters('adminPassword')]",
+              "secrets": [],
+              "allowExtensionOperations": true
+          },
+          "networkProfile": {
+              "networkInterfaces": [
+                  {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('resourceName'),'-win10','-nic'))]"
+                  }
+              ]
+          },
+          "diagnosticsProfile": {
+              "bootDiagnostics": {
+                  "enabled": true,
+                  "storageUri": "[reference(resourceId(resourceGroup().name, 'Microsoft.Storage/storageAccounts', variables('resourceName')), '2015-06-15').primaryEndpoints['blob']]"
+              }
+          }
+      }
+  },
+  {
+    "name": "[concat(variables('resourceName'),'-win10-nic')]",
+    "type": "Microsoft.Network/networkInterfaces",
+    "apiVersion": "2016-09-01",
+    "location": "[variables('location')]",
+    "dependsOn": [
+      "[concat('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'), '-hub'))]",
+      "[concat('Microsoft.Network/networkSecurityGroups/', concat(variables('resourceName'), '-paw-1-nsg'))]",
+      "[concat('Microsoft.Network/publicIpAddresses/', concat(variables('resourceName'), '-win10-pip'))]"
+    ],
+    "properties": {
+      "ipConfigurations": [
+        {
+          "name": "ipconfig1",
+          "properties": {
+            "subnet": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'), '-hub'), 'default')]"
+            },
+            "privateIPAllocationMethod": "Dynamic",
+            "publicIpAddress": {
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIpAddresses', concat(variables('resourceName'), '-win10-pip'))]"
+            }
+          }
+        }
+      ],
+      "networkSecurityGroup": {
+        "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', concat(variables('resourceName'), '-paw-1-nsg'))]"
+      },
+      "dnsSettings": {
+        //"dnsServers": ["[variables('adPDCNicIPAddress')]"]
+      }
+    }
+  },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-07-01",
+      "name": "[concat(variables('resourceName'),'-linux-1')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', concat(variables('resourceName'), '-linux-1-nic'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('resourceName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_DS1_v2"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "osDisk": {
+            "osType": "Linux",
+            "name": "[concat(variables('resourceName'),'-linux-1-os')]",
+            "createOption": "FromImage",
+            "caching": "ReadWrite",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            },
+            "diskSizeGB": 30
+          },
+          "dataDisks": []
+        },
+        "osProfile": {
+          "computerName": "linux-1",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "provisionVMAgent": true
+          },
+          "secrets": [],
+          "allowExtensionOperations": true
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('resourceName'), '-linux-1-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId(resourceGroup().name, 'Microsoft.Storage/storageAccounts', variables('resourceName')), '2015-06-15').primaryEndpoints['blob']]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-linux-1-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'), '-hub'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', concat(variables('resourceName'), '-paw-1-nsg'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'), '-hub'), 'default')]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', concat(variables('resourceName'), '-paw-1-nsg'))]"
+        },
+        "dnsSettings": {
+          //"dnsServers": ["[variables('adPDCNicIPAddress')]"]
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-paw-1')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2016-04-30-preview",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('resourceName'),'-paw-1-nic')]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('resourceName'))]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "paw-1",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "microsoftvisualstudio",
+            "offer": "visualstudio2019latest",
+            "sku": "vs-2019-comm-latest-ws2019",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(variables('resourceName'),'-paw-1-os')]",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('resourceName'), '-paw-1-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId(resourceGroup().name, 'Microsoft.Storage/storageAccounts', variables('resourceName')), '2015-06-15').primaryEndpoints['blob']]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('resourceName'),'-paw-1','/', 'winExtension')]",
+          "apiVersion": "2015-06-15",
+          "location": "[resourceGroup().location]",
+          "comments": "Script",
+          "tags": {
+            "displayName": "VM Extension"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', concat(variables('resourceName'),'-paw-1'))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.8",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "https://raw.githubusercontent.com/solliancenet/security-workshop/master/artifacts/environment-setup/automation/spektra/post-install-script02.ps1"
+              ]
+            },
+            "protectedSettings": {
+              "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File post-install-script02.ps1', variables('postInstallParameters'))]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-paw-1-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIpAddresses/', concat(variables('resourceName'), '-paw-1-pip'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'), '-hub'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', concat(variables('resourceName'), '-paw-1-nsg'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'), '-hub'), 'default')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIpAddresses', concat(variables('resourceName'), '-paw-1-pip'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', concat(variables('resourceName'), '-paw-1-nsg'))]"
+        },
+        "dnsSettings": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-win10-pip')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "name": "[concat(variables('resourceName'),'-paw-1-pip')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[concat(variables('resourceName'),'-paw-1-nsg')]",
+      "apiVersion": "2017-06-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "RDP",
+            "properties": {
+              "priority": 1000,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          }
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[variables('publicIPAddressName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-03-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('dnsPrefix')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2019-12-01",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[variables('location')]",
+      "name": "[variables('adAvailabilitySetName')]",
+      "properties": {
+        "PlatformUpdateDomainCount": 20,
+        "PlatformFaultDomainCount": 2
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
+    {
+      "name": "[variables('adLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "apiVersion": "2020-03-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('adLBFE')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('adLBBE')]"
+          }
+        ],
+        "inboundNatRules": [
+          {
+            "name": "[variables('adPDCRDPNAT')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('adlbFEConfigID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": "[parameters('pdcRDPPort')]",
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "[variables('adBDCRDPNAT')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('adlbFEConfigID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": "[parameters('bdcRDPPort')]",
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('adPDCNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-03-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/VirtualNetworks', concat(variables('resourceName'),'-ad'))]",
+        "[resourceId('Microsoft.Network/loadbalancers', variables('adLBName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables('adPDCNicIPAddress')]",
+              "subnet": {
+                "id": "[variables('adSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('adBEAddressPoolID')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[variables('adPDCRDPNATRuleID')]"
+                }
+              ]
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('adBDCNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-03-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('resourceName'),'-ad'))]",
+        "[resourceId('Microsoft.Network/loadBalancers', variables('adLBName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables('adBDCNicIPAddress')]",
+              "subnet": {
+                "id": "[variables('adSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('adBEAddressPoolID')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[variables('adBDCRDPNATRuleID')]"
+                }
+              ]
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": [
+            //"[variables('adPDCNicIPAddress')]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('adPDCVMName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-12-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('adPDCNicName'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]",
+        "[resourceId('Microsoft.Network/loadBalancers', variables('adLBName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('adVMSize')]"
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]"
+        },
+        "osProfile": {
+          "computerName": "adpdc",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(variables('adPDCVMName'),'_OSDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[variables('storageAccountType')]"
+            }
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(variables('adPDCVMName'),'_data-disk1')]",
+              "caching": "None",
+              "diskSizeGB": "[variables('adDataDiskSize')]",
+              "lun": 0,
+              "createOption": "Empty",
+              "managedDisk": {
+                "storageAccountType": "[variables('storageAccountType')]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('adPDCNicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "CreateADForest",
+          "type": "extensions",
+          "apiVersion": "2019-12-01",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('adPDCVMName'))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.19",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "ModulesUrl": "[variables('adPDCModulesURL')]",
+              "ConfigurationFunction": "[variables('adPDCConfigurationFunction')]",
+              "Properties": {
+                "DomainName": "[parameters('domainName')]",
+                "AdminCreds": {
+                  "UserName": "[parameters('adminUsername')]",
+                  "Password": "PrivateSettingsRef:AdminPassword"
+                }
+              }
+            },
+            "protectedSettings": {
+              "Items": {
+                "AdminPassword": "[parameters('adminPassword')]"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('adBDCVMName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-12-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('adBDCNicName'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]",
+        "[resourceId('Microsoft.Network/loadBalancers', variables('adLBName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('adVMSize')]"
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]"
+        },
+        "osProfile": {
+          "computerName": "adbdc",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(variables('adBDCVMName'),'_osdisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[variables('storageAccountType')]"
+            }
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(variables('adBDCVMName'),'_data-disk1')]",
+              "caching": "None",
+              "diskSizeGB": "[variables('adDataDiskSize')]",
+              "lun": 0,
+              "createOption": "Empty",
+              "managedDisk": {
+                "storageAccountType": "[variables('storageAccountType')]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('adBDCNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('adBDCVMName'),'/PrepareBDC')]",
+      "apiVersion": "2019-12-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('adBDCVMName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.19",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "ModulesUrl": "[variables('adBDCPreparationModulesURL')]",
+          "ConfigurationFunction": "[variables('adBDCPreparationFunction')]",
+          "Properties": {
+            "DNSServer": "[variables('adPDCNicIPAddress')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ConfiguringBackupADDomainController",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('adBDCVMName'),'PrepareBDC')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configureADBDCTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adBDCVMName": {
+            "value": "[variables('adBDCVMName')]"
+          },
+          "location": {
+            "value": "[variables('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "adBDCConfigurationFunction": {
+            "value": "[variables('adBDCConfigurationFunction')]"
+          },
+          "adBDCConfigurationModulesURL": {
+            "value": "[variables('adBDCConfigurationModulesURL')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "UpdateVNetDNS2",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'ConfiguringBackupADDomainController')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vnetwithDNSTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[variables('location')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "virtualNetworkAddressRange": {
+            "value": "[variables('virtualNetworkAddressRange')]"
+          },
+          "subnetName": {
+            "value": "[variables('adSubnetName')]"
+          },
+          "subnetRange": {
+            "value": "[variables('adSubnet')]"
+          },
+          "DNSServerAddress": {
+            "value": [
+              "[variables('adPDCNicIPAddress')]",
+              "[variables('adBDCNicIPAddress')]"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('resourceName'), '-paw-1','/joindomain')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('adBDCVMName'),'PrepareBDC')]",
+        "[concat('Microsoft.Compute/virtualMachines/', concat(variables('resourceName'), '-paw-1'))]",
+        "UpdateVNetDNS2"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "JsonADDomainExtension",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "Name": "[parameters('domainName')]",
+          "OUPath": "[variables('ouPath')]",
+          "User": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
+          "Restart": "true",
+          "Options": "[variables('domainJoinOptions')]"
+        },
+        "protectedSettings": {
+          "Password": "[parameters('adminPassword')]"
+        }
+      }
+    }
+  ]
+}

@@ -290,21 +290,26 @@
 
 11. Run the remaining cells, you will make calls to the external API providers to enrich the log data with threat levels and IP Address analysis
 
-## Exercise 9 : Export Log Analytics data to Azure Event Hub
+## Exercise 9 : Export Log Analytics data to Azure Storage
 
-TODO
+In this exercise you will setup an export rule to send log data to Azure Storage as a backup.
 
 ### Task 1 : Create Export Rule
 
-1. TODO
+1. Run the `ExportLogsToStorage.ps1` PowerShell script
 
 ### Task 2 : Review data
 
-1. TODO
+1. Perform the following actions:
+   1. TODO
+2. Open the storage account, review the log data sent to it
 
 ### Task 3 : Query data with Notebooks
 
-1. TODO
+1. Open the `ExportLogsToStorage.ipynb` notebook
+2. Replace all the values
+3. Run the notebook
+4. TODO
 
 ## Exercise 10 : Extending Azure Sentinel Incidents (Optional)
 

@@ -1,4 +1,4 @@
-# Execute Azure Defender Protections
+# Azure Security Center + Azure Defender Setup : Lab 3 : Execute Azure Defender Protections
 
 - Topics
   - Adaptive Application Controls

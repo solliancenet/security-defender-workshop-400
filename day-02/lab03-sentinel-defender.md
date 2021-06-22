@@ -11,8 +11,10 @@
 1. Open the Azure Portal in your **paw-1** virtual machine
 2. Select **Azure Sentinel**
 3. Select the **wssecuritySUFFIX** log analytics workspace
-4. Under **General**, select **Logs**, notice your previous log analytics queries are displayed and available to run
-5. Continue to explore the various Azure Sentinel blade items
+4. Under **General**, select **Logs**
+5. If prompted with any dialogs, close them.
+6. You should see some previous queries that were run previously
+7. Continue to explore the various Azure Sentinel blade items
 
     ![Azure Sentinel is displayed.](media/sentinel-view.png "Browse the Sentinel blade")
 
@@ -97,6 +99,11 @@
 
 9. Leave the selected workbook location, select **OK**
 10. Select **View saved workbook**
+11. Browse back to the Sentinel Workbooks blade
+12. Select **MITRE ATT&CK Workbook**
+13. Select **Save**
+14. Leave the selected workbook location, select **OK**
+15. Select **View saved workbook**
 
 ## Exercise 4 : Azure Sentinel Hunting
 
@@ -109,11 +116,16 @@
 
     ![Hunting example is displayed.](media/sentinel-hunting-example.png "Review a Hunting example")
 
+4. Select **Run all queries (Preview)**, you should see all queries start to execute.
+
 ## Exercise 5 : Azure Sentinel Entity Behavior
 
 1. In the Azure Sentinel blade, select **Entity Behavior**
-2. This feature allows you to track based on special types of entities such as Users, Resources, IP Address, etc
-3. It must be enabled by a global admin, any unfortunately our lab environment does not allow for this.
+2. Select **Configure UEBA**
+3. Again, select **Configure UEBA**
+4. Ensure the **Anomalies** toggle is set to **On**
+
+    > **NOTE** This feature allows you to track based on special types of entities such as Users, Resources, IP Address, etc. It must be enabled by a global admin, any unfortunately our lab environment does not allow for this.
 
 ## Exercise 6 : Threat Intelligence
 
@@ -127,6 +139,9 @@
 5. For the threat types, select all options
 6. For the confidence, move the scroll bar to **100**
 7. For the valid from, select today's date
+
+    ![Create new threat indicator.](./media/sentinel_threat_indicator_ipaddress_create.png "Create new threat indicator")
+
 8. Select **Apply**
 
 ## Exercise 7 : Azure Sentinel Incidents and Investigation

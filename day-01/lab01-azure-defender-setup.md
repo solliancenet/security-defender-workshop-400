@@ -1,4 +1,4 @@
-# Azure Security Center + Azure Defender Setup
+# Azure Security Center + Azure Defender Setup : Lab 1 : Setup
 
 ## Exercise 1: Log Analytics Solutions with Azure Security Center
 

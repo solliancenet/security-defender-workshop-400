@@ -10,13 +10,9 @@
 
 1. Open the Azure Portal in your **paw-1** virtual machine
 2. Select **Azure Sentinel**
-
-    ![Azure Sentinel is highlighted.](media/sentinel-browse.png "Browse to Azure Sentinel")
-
-3. Select **+ New**
-4. Select the **wssecuritySUFFIX** log analytics workspace, then select **Add**
-5. Under **General**, select **Logs**, notice your previous log analytics queries are displayed and available to run
-6. Continue to explore the various Azure Sentinel blade items
+3. Select the **wssecuritySUFFIX** log analytics workspace
+4. Under **General**, select **Logs**, notice your previous log analytics queries are displayed and available to run
+5. Continue to explore the various Azure Sentinel blade items
 
     ![Azure Sentinel is displayed.](media/sentinel-view.png "Browse the Sentinel blade")
 

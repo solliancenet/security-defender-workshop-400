@@ -1,7 +1,7 @@
 {
-    properties: {
-      severity: "High",
-      status: "New",
-      title: "Example Title"
-    }
+  "properties": {
+    "severity": "High",
+    "status": "New",
+    "title": "Reboot needed"
   }
+}

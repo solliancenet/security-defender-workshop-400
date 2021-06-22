@@ -1,8 +1,12 @@
-$subscriptionId = "#SUBCRIPTION_ID#";
+$subscriptionId = "#SUBSCRIPTION_ID#";
 $resourceGroupName = "#RESOURCE_GROUP_NAME#";
 $workspaceName = "#WORKSPACE_NAME#";
 
-$url = "https://management.azure.com/subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.operationalInsights/workspaces/$workspaceName/incidents/73e01a99-5cd7-4139-a149-9f2736ff2ab5?api-version=2020-08-01";
+$id = [Guid]::NewGuid();
+
+$url = "https://management.azure.com/subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.operationalInsights/workspaces/$workspaceName/providers/Microsoft.SecurityInsights/incidents/$($id)?api-version=2021-04-01";
+
+cd "c:/labfiles/#WORKSHOP_NAME#/artifacts/day-02"
 
 $post = get-content "incident_post.json";
 
@@ -19,6 +23,7 @@ $tokenValue = ((az account get-access-token --resource https://management.azure.
 #do the post...
 $headers = @{
     'Authorization' = "Bearer " + $tokenValue;
+    'Content-Type' = "application/json";
 }
 
 $res = Invoke-RestMethod -Uri $url -Method PUT -Headers $headers -Body $post

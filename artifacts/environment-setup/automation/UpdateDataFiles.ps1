@@ -50,6 +50,14 @@ UpdateFile "./day-02/ExportLogsToStorage.ps1" $ht;
 UpdateFile "./day-02/storage_post.json" $ht;
 UpdateFile "./day-02/incident_post.json" $ht;
 
+UpdateFile "./day-02/logfile.txt" $ht;
+UpdateFile "./day-02/DataCollector.ps1" $ht;
+UpdateFile "./day-02/host_logins.csv" $ht;
+UpdateFile "./day-02/logs.json" $ht;
+UpdateFile "./day-02/Azure Sentinel ML.ipynb" $ht;
+UpdateFile "./day-02/aad_logons.pkl" $ht;
+UpdateFile "./day-02/webattack.ps1" $ht;
+
 UpdateFile "./day-02/logs-01/logs-01.log" $ht;
 UpdateFile "./day-02/logs-01/logs-02.log" $ht;
 UpdateFile "./day-02/logs-02/logs-03.log" $ht;

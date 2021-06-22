@@ -131,7 +131,7 @@ $cred = new-object -typename System.Management.Automation.PSCredential -argument
 Connect-AzAccount -Credential $cred | Out-Null
  
 # Template deployment
-$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*AZDEFEND*" }).ResourceGroupName
+$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "ODL-AZDEFEND*" }).ResourceGroupName
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
 $branchName = "main";
@@ -183,6 +183,46 @@ $content = $content.replace("#IN_APP_SVC_URL#",$appHost);
 set-content "c:\labfiles\$workshopName\artifacts\environment-setup\automation\updatedatafiles.ps1" $content;
 
 . "c:\labfiles\$workshopName\artifacts\environment-setup\automation\updatedatafiles.ps1"
+
+#install azcopy
+$azCopyLink = Check-HttpRedirect "https://aka.ms/downloadazcopy-v10-windows"
+
+if (!$azCopyLink)
+{
+        $azCopyLink = "https://azcopyvnext.azureedge.net/release20200501/azcopy_windows_amd64_10.4.3.zip"
+}
+
+Invoke-WebRequest $azCopyLink -OutFile "azCopy.zip"
+Expand-Archive "azCopy.zip" -DestinationPath ".\" -Force
+$azCopyCommand = (Get-ChildItem -Path ".\" -Recurse azcopy.exe).Directory.FullName
+$azCopyCommand += "\azcopy"
+
+#upload the updated login files to azure storage
+$wsName = "wssecurity" + $deploymentId;
+$dataLakeStorageBlobUrl = "https://"+ $wsName + ".blob.core.windows.net/"
+$dataLakeStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -AccountName $wsName)[0].Value
+$dataLakeContext = New-AzStorageContext -StorageAccountName $wsName -StorageAccountKey $dataLakeStorageAccountKey
+$container = New-AzStorageContainer -Permission Container -name "logs" -context $dataLakeContext;
+$destinationSasKey = New-AzStorageContainerSASToken -Container "logs" -Context $dataLakeContext -Permission rwdl
+
+Write-Information "Copying single files from local..."
+
+$singleFiles = @{
+  queries = "c:\labfiles\$workshopName\artifacts\day-02\queries.yaml,logs/queries.yaml"
+  aad_logons = "c:\labfiles\$workshopName\artifacts\day-02\aad_logons.pkl,logs/aad_logon.pkl"
+  host_logins = "c:\labfiles\$workshopName\artifacts\day-02\host_logins.csv,logs/host_logins.csv"
+}
+
+foreach ($singleFile in $singleFiles.Keys) 
+{
+  $vals = $singleFiles[$singleFile].split(",");
+  $vals;
+  $source = $vals[0]
+  $destination = $dataLakeStorageBlobUrl + $vals[1] + $destinationSasKey
+  Write-Host "Copying file $($source) to $($destination)"
+  Write-Information "Copying file $($source) to $($destination)"
+  & $azCopyCommand copy $source $destination 
+}
 
 sleep 20
 

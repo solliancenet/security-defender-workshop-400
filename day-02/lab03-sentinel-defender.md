@@ -219,18 +219,18 @@
 
 9. Upload the `c:\LabFiles\artifacts\day-02\Azure Sentinel ML.ipynb` file to the workspace, when prompted, check both checked boxes, then select **Upload**
 10. In the Compute area, select the **+** sign
-11. Select the **Standard_DS3_v2**
+11. For the name, type **main**
+12. Select the **Standard_DS3_v2**
 
     ![Machine Learning Workspace upload file.](./media/sentinel-notebook-mlworkspace-compute.png "Upload the notebook")
 
-12. Select **Next**
-13. From compute name, type **Main**, select **Create**. Continue on while the compute is being provisioned.
+13. Select **Create**. Continue on while the compute is being provisioned.
 
-14. In another browser tab, navigate to the [Azure Active Directory page](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview), copy your `Tenant ID` for use later.
+15. In another browser tab, navigate to the [Azure Active Directory page](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview), copy your `Tenant ID` for use later.
 
     ![The Azure AD page is displayed.](./media/sentinel-azuread-tenant-id.png "Copy the tenant id")
 
-15. Browse to your **wssecuritySUFFIX** log analytics workspace, copy the workspace id.
+16. Browse to your **wssecuritySUFFIX** log analytics workspace, copy the workspace id.
 
 ### Task 2: Create VirusTotal account
 
@@ -261,19 +261,20 @@
 
 1. Switch back to the Machine Learning NoteBook, the compute should be provisioned
 2. If prompted, select **Start Jupyter kernel**
-3. For each cell select **Run** and follow each of the cells as they are executed. Do not run the entire notebook.
+3. If prompted, select **Authenticate**
+4. For each cell select **Run** and follow each of the cells as they are executed. Do not run the entire notebook.
 
     ![The Run button is highlighted.](./media/sentinel-notebook-run.png "Run the notebook")
 
-4. Some cells will output information:
+5. Some cells will output information:
 
     ![A cell with output.](./media/sentinel-notebook-cell-output.png "Review the output")
 
-5. Some will prompt you for data such as the Workspace, TenantId and API keys:
+6. Some will prompt you for data such as the Workspace, TenantId and API keys:
 
     ![A cell with input.](./media/sentinel-notebook-cell-input.png "Enter your information in the cell")
 
-6. Another cell will ask you to generate an access token
+7. Another cell will ask you to generate an access token
 
     ![A cell to connect to Azure.](./media/sentinel-notebook-cell-azure-login.png "Copy the device token to azure for authentication")
 
@@ -283,23 +284,23 @@
 
    - Login using the lab username and password
 
-7. Continue to run a few more cells, you should see a cell output the Log Analytics table and the `SigninLogs` schema:
+8. Continue to run a few more cells, you should see a cell output the Log Analytics table and the `SigninLogs` schema:
 
     ![Cell output is displayed.](./media/sentinel-notebook-cell-log-analytics-tables.png "Review the output")
 
-8. One cell will display the queries available to you
+9. One cell will display the queries available to you
 
     ![Cell output is displayed.](./media/sentinel-notebook-cell-log-analytics-queries.png "Review the output")
 
-9. The next cell will display kusto query details
+10. The next cell will display kusto query details
 
     ![Cell output is displayed.](./media/sentinel-notebook-cell-log-analytics-query-details.png "Review the output")
 
-10. The next cell will execute a query passing in parameters:
+11. The next cell will execute a query passing in parameters:
 
     ![Cell output is displayed.](./media/sentinel-notebook-cell-log-analytics-query-execution.png "Review the output")
 
-11. Run the remaining cells, you will make calls to the external API providers to enrich the log data with threat levels and IP Address analysis
+12. Run the remaining cells, you will make calls to the external API providers to enrich the log data with threat levels and IP Address analysis
 
 ## Exercise 9 : Export Log Analytics data to Azure Storage
 
@@ -307,20 +308,28 @@ In this exercise you will setup an export rule to send log data to Azure Storage
 
 ### Task 1 : Create Export Rule
 
-1. Run the `ExportLogsToStorage.ps1` PowerShell script
+1. Run the `\artifacts\day-02\ExportLogsToStorage.ps1` PowerShell script
+2. You should get a json response back
 
 ### Task 2 : Review data
 
-1. Perform the following actions:
+1. Switch to the Azure Portal
+2. Perform the following actions:
    1. TODO
-2. Open the storage account, review the log data sent to it
+3. Browse to the lab resource group
+4. Select the **wssecuritySUFFIX** storage account
+5. Under **Data storage**, select **Containers**
+6. Open the storage account, review the log data sent to it
 
 ### Task 3 : Query data with Notebooks
 
-1. Open the `ExportLogsToStorage.ipynb` notebook
-2. Replace all the values
-3. Run the notebook
-4. TODO
+1. Open Visual Studio Code
+2. Open the `\artifacts\day-02\ExportLogsToStorage.ipynb` notebook
+3. When prompted, select **Install** for recommended extensions, you should see the **Jupyter** extension get installed.
+4. Select **Trust** when prompted
+5. Select **Yes** when prompted for Python extensions
+6. Switch back to the notebook, replace all the values
+7. Run the notebook
 
 ## Exercise 10 : Extending Azure Sentinel Incidents (Optional)
 

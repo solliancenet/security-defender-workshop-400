@@ -1,0 +1,8 @@
+#TODAY# 02:34:36 192.168.102.2,SEC-001,Information,FileUpdate c:\windows\system32\drivers\etc
+#TODAY# 02:34:36 192.168.102.2,SEC-002,Information,FileModify c:\windows\system32\dns.exe
+#TODAY# 02:34:36 192.168.102.2,207,Success,Client 05a26a97-272a-4bc9-8f64-269d154b0e39 connected
+#TODAY# 02:33:33 192.168.102.2,208,Warning,Client ec53d95c-1c88-41ae-8174-92104212de5d disconnected
+#TODAY# 02:35:44 192.168.102.2,209,Success,Transaction 10d65890-b003-48f8-9cfc-9c74b51189c8 succeeded
+#TODAY# 02:38:22 192.168.102.2,302,Error,Application could not connect to database
+#TODAY# 02:31:34 192.168.102.2,303,Error,Application lost connection to database
+#TODAY# 02:31:34 192.168.102.2,304,Error,Application failure

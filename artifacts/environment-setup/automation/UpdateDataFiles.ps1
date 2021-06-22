@@ -40,14 +40,14 @@ $ht.add("#IP_2#", "80.89.137.214"); #russia
 $ht.add("#IP_3#", "117.82.191.160"); #china
 $ht.add("#WORKSHOP_NAME#", "#IN_WORKSHOP_NAME#");
 
-UpdateFile "Attack_linux.txt" $ht;
-UpdateFile "Attack_windows.txt" $ht;
-UpdateFile "Enumerate.ps1" $ht;
-UpdateFile "CreateIncident.ps1" $ht;
-UpdateFile "ExportLogsToStorage.ipynb" $ht;
-UpdateFile "ExportLogsToStorage.ps1" $ht;
-UpdateFile "storage_post.ps1" $ht;
-UpdateFile "incident_post.ps1" $ht;
+UpdateFile "./day-02/Attack_linux.txt" $ht;
+UpdateFile "./day-02/Attack_windows.txt" $ht;
+UpdateFile "./day-02/Enumerate.ps1" $ht;
+UpdateFile "./day-02/CreateIncident.ps1" $ht;
+UpdateFile "./day-02/ExportLogsToStorage.ipynb" $ht;
+UpdateFile "./day-02/ExportLogsToStorage.ps1" $ht;
+UpdateFile "./day-02/storage_post.ps1" $ht;
+UpdateFile "./day-02/incident_post.ps1" $ht;
 
 UpdateFile "./day-02/logs-01/logs-01.log" $ht;
 UpdateFile "./day-02/logs-01/logs-02.log" $ht;

@@ -135,27 +135,33 @@ $cred = new-object -typename System.Management.Automation.PSCredential -argument
 Connect-AzAccount -Credential $cred | Out-Null
  
 # Template deployment
-$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*-L400*" }).ResourceGroupName
+$rg = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*AZDEFEND*" });
+$resourceGroupName = $rg.ResourceGroupName
+$region = $rg.Location;
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
-$branchName = "main";
+$branchName = "master";
 $workshopName = "security-defender-workshop-400";
-
-$url = "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/spektra/deploy.parameters.post.json"
-$output = "c:\LabFiles\parameters.json";
-$wclient = New-Object System.Net.WebClient;
-$wclient.CachePolicy = new-object System.Net.Cache.RequestCachePolicy([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore);
-$wclient.Headers.Add("Cache-Control", "no-cache");
-$wclient.DownloadFile($url, $output)
-(Get-Content -Path "c:\LabFiles\parameters.json") | ForEach-Object {$_ -Replace "GET-AZUSER-PASSWORD", "$AzurePassword"} | Set-Content -Path "c:\LabFiles\parameters.json"
-(Get-Content -Path "c:\LabFiles\parameters.json") | ForEach-Object {$_ -Replace "GET-DEPLOYMENT-ID", "$deploymentId"} | Set-Content -Path "c:\LabFiles\parameters.json"
-
-Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
-New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "c:\LabFiles\parameters.json"
+$repoUrl = "solliancenet/security-defender-workshop-400";
 
 #download the git repo...
 Write-Host "Download Git repo." -ForegroundColor Green -Verbose
 git clone https://github.com/solliancenet/$workshopName.git $workshopName
+
+$parametersFile = "c:\labfiles\$workshopName\artifacts\environment-setup\spektra\deploy.parameters.post.json"
+$content = Get-Content -Path $parametersFile -raw;
+
+$content = $content.Replace("GET-AZUSER-PASSWORD",$azurepassword);
+$content = $content | ForEach-Object {$_ -Replace "GET-AZUSER-UPN", "$AzureUsername"};
+$content = $content | ForEach-Object {$_ -Replace "GET-AZUSER-PASSWORD", "$AzurePassword"};
+$content = $content | ForEach-Object {$_ -Replace "GET-ODL-ID", "$deploymentId"};
+$content = $content | ForEach-Object {$_ -Replace "GET-DEPLOYMENT-ID", "$deploymentId"};
+$content = $content | ForEach-Object {$_ -Replace "GET-REGION", $region};
+$content = $content | ForEach-Object {$_ -Replace "ARTIFACTS-LOCATION", "https://raw.githubusercontent.com/$repoUrl/$branchName/artifacts/environment-setup/automation/"};
+$content | Set-Content -Path "$($parametersFile).json";
+
+Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "$($parametersFile).json"
 
 cd './$workshopName/artifacts/environment-setup/automation'
 

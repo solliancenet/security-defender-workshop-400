@@ -135,25 +135,38 @@ $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["Deployment
 $branchName = "main";
 $workshopName = "security-defender-workshop-400";
 
-$url = "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/spektra/deploy.parameters.post.json"
-$output = "c:\LabFiles\parameters.json";
-$wclient = New-Object System.Net.WebClient;
-$wclient.CachePolicy = new-object System.Net.Cache.RequestCachePolicy([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore);
-$wclient.Headers.Add("Cache-Control", "no-cache");
-$wclient.DownloadFile($url, $output)
-(Get-Content -Path "c:\LabFiles\parameters.json") | ForEach-Object {$_ -Replace "GET-AZUSER-PASSWORD", "$AzurePassword"} | Set-Content -Path "c:\LabFiles\parameters.json"
-(Get-Content -Path "c:\LabFiles\parameters.json") | ForEach-Object {$_ -Replace "GET-DEPLOYMENT-ID", "$deploymentId"} | Set-Content -Path "c:\LabFiles\parameters.json"
-
 #download the git repo...
 Write-Host "Download Git repo." -ForegroundColor Green -Verbose
 git clone https://github.com/solliancenet/$workshopName.git $workshopName
 
 cd "./$workshopName/artifacts/environment-setup/automation"
 
+#get the waf public IP
+$wafName = "wssecurity" + $deploymentId + "-ag";
+$appGW = Get-AzApplicationGateway -name $wafName;
+$fipconfig = Get-AzApplicationGatewayFrontendIPConfig -ApplicationGateway $appGW
+$pipName = "wssecurity" + $deploymentId + "-pip"
+$ip = Get-AzPublicIpAddress -name $pipName
+$wafIp = $ip.IpAddress;
+
+#get the app svc url
+$webAppName = "wssecurity" + $deploymentId;
+$app = Get-AzWebApp -Name $webAppName
+$appHost = $app.HostNames[0];
+$appUrlFull = "https://" + $app.HostNames[0];
+
+#get the workspace Id
+$wsName = "wssecurity" + $deploymentId;
+$ws = Get-AzOperationalInsightsWorkspace -Name $wsName -ResourceGroup $resourceGroupName;
+$workspaceId = $ws.CustomerId;
+$keys = Get-AzOperationalInsightsWorkspaceSharedKey -ResourceGroup $resourceGroupName -Name $wsName;
+$workspaceKey = $keys.PrimarySharedKey;
+
 #update the updatedatafiles.ps1
 $content = get-content "c:\labfiles\$workshopName\artifacts\environment-setup\automation\updatedatafiles.ps1" -raw
 $content = $content.replace("#IN_WORKSHOP_NAME#",$workshopName);
 $content = $content.replace("#IN_USERNAME#",$userName);
+$content = $content.replace("#IN_PASSWORD#",$password);
 $content = $content.replace("#IN_WORKSPACE_NAME#",$wsName);
 $content = $content.replace("#IN_STORAGE_ACCOUNT_NAME#",$wsName);
 $content = $content.replace("#IN_WORKSPACE_ID#",$workspaceId);

@@ -2,29 +2,26 @@
 
 ## Exercise 1: Setup gateway agent
 
-### Task 1: Install Management Agent
+### Task 1: Enable Azure Automation in Log Analytics Workspace
 
-1. Browse to the Azure Portal
-2. Open your Log Analytics workspace
-3. Under **Settings**, select **Agents management**
-4. Select **Download Windows Agent (64 bit)**
-5. Install the agent
-
-### Task 2: Enable Azure Automation in Log Analytics Workspace
-
-1. Open a Windows Powershell window
-2. Run the following:
+1. Switch to the **wssecuritySUFFIX-paw-1** virtual machine
+2. Open a Windows Powershell window, run the following:
 
 ```PowerShell
 Set-AzOperationalInsightsIntelligencePack -ResourceGroupName "{RESOURCE_GROUP_NAME}" -WorkspaceName "{WORKSPACE_NAME}" -IntelligencePackName "AzureAutomation" -Enabled $true
 ```
 
-### Task 3: Create Hybrid Worker Group and Worker
+![Results of the above command.](./media/loganalytics-enable_automation.png "Results of the above command.")
 
-1. Browse to the Azure Automation account
+### Task 2: Create Hybrid Worker Group and Worker
+
+1. Browse to the **wssecuritySUFFIX** Azure Automation account
 2. Under **Account Settings**, select **Keys**
 3. Record the `url` and the `primary access key`
-4. Open a Windows Powershell window as administrator
+
+    ![Automation account url and key](./media/automation_keys.png "Automation account url and key")
+
+4. On the **wssecuritySUFFIX-paw-1** virtual machine, open a Windows Powershell window as administrator
 5. Run the following to register the machine, replace the agent version, and the automation account url and key:
 
 ```PowerShell
@@ -41,6 +38,8 @@ Add-HybridRunbookWorker –GroupName $groupName -Url $url -Key $key;
 6. Switch back to the Azure Automation Account
 7. Under **Process Automation**, select **Hybrid worker groups**, you should see your new `onpremises-win-group` displayed
 
+    ![Automation worker group is displayed](./media/automation_worker_group.png "Automation worker group is displayed")
+
 ### Task 5: Execute a Task
 
 1. Under **Process Automation**, select **Runbooks**
@@ -50,23 +49,30 @@ Add-HybridRunbookWorker –GroupName $groupName -Url $url -Key $key;
 5. Select **Create**
 6. In the runbook window, paste the following
 
-```PowerShell
-mkdir "c:\logs";
+    ```PowerShell
+    mkdir "c:\logs";
 
-$line = "$([Datetime::Now]::ToShortDateString()) : Reboot started.";
-Add-Content "c:\logs\runbook.log" $line;
-```
+    $line = "$([Datetime::Now]::ToShortDateString()) : Reboot started.";
 
-1. Select **Test pane**
-2. Select **Hybrid worker**, then select **onpremises-win-group**
-3. Select **Start**
-4. Switch to your virtual machine, browse to the `c:\logs` folder, notice the new `runbook.log` file
-5. Switch back to the Automation account, close the test pane
-6. Select **Publish**, then select **Yes**
-7. Under **Runbook settings**, select **Logging and tracing**
-8. Toggle the options to **On**
-9. Select **Save**
-10. Switch to your VM, in a PowerShell window, run the following:
+    Add-Content "c:\logs\runbook.log" $line;
+    ```
+
+7. Select **Test pane**
+
+    ![Automation runbook with test pane highlighted](./media/automation_runbook_reboot.png "Automation runbook with test pane highlighted")
+
+8. Select **Hybrid worker**, then select **onpremises-win-group**
+9. Select **Start**, wait for the test to complete.
+
+    ![Hybrid worker group selected with start highlighted](./media/automation_runbook_reboot_run.png "Hybrid worker group selected with start highlighted")
+
+10. Switch to your virtual machine, browse to the `c:\logs` folder, notice the new `runbook.log` file
+11. Switch back to the Automation account, close the test pane
+12. Select **Publish**, then select **Yes**
+13. Under **Runbook settings**, select **Logging and tracing**
+14. Toggle the options to **On**
+15. Select **Save**
+16. Switch to your VM, in a PowerShell window, run the following:
 
 ```PowerShell
 Start-AzAutomationRunbook -ResourceGroupName "{RESOURCE_GROUP_NAME}" -AutomationAccountName "{ACCOUNT_NAME}" -Name "Reboot" -RunOn "onpremises-win-group"

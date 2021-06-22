@@ -45,9 +45,9 @@ Synopsis: Azure Security Center provides several advanced security and threat de
 
 6. Login to the **wssecuritySUFFIX-linux-1** machine using the `wsuser` username and lab password.  
 
-    - Enter **10.0.0.4** for the IP Address.
+    - Enter **10.0.0.5** for the IP Address.
     - Select **Open**
-    - In the dialog, select **Yes**
+    - In the dialog, select **Accept**
     - Enter the **wsuser**
     - Enter the lab password
 
@@ -77,16 +77,17 @@ Synopsis: Azure Security Center provides several advanced security and threat de
 2. Open a PowerShell ISE Window, in the command prompt area, run the following:
 
     ```PowerShell
-    plink.exe wsuser@10.0.0.4 -pw ABadPassword
+    plink.exe wsuser@10.0.0.5 -pw ABadPassword
     ```
 
-3. Select **Y** in the plink window
+3. If prompted, select **Y** in the plink window
+4. You should see **Access denied** as it is a bad password
 
-4. Open the `C:\LabFiles\security-workshop\Artifacts\BruteForce.ps1` script.
+5. Open the `C:\LabFiles\security-defender-workshop-400\artifacts\day-01\BruteForce.ps1` script in Windows PowerShell ISE window.
 
-5. Run the script, notice how it will execute several attempts to login via SSH to the **wssecuritySUFFIX-linux-1** machine using the plink tool from putty.
+6. Run the script, notice how it will execute several attempts to login via SSH to the **wssecuritySUFFIX-linux-1** machine using the plink tool from putty.
 
-6. After a few moments (up to 30 mins), you will see an alert from Security Center about a successful brute force attack.
+7. After a few moments (up to 30 mins), you will see an alert from Security Center about a successful brute force attack.
 
     - Navigate to Security Center
     - Select **Security Alerts**
@@ -108,7 +109,7 @@ Synopsis: Azure Security Center provides several advanced security and threat de
 
     ![The change tracking blade is displayed with custom and change link highlighted.](./media/virtual-machines-svcs-changetracking-config.png "Select CUSTOM and then select change links")
 
-    > **NOTE** If you do not pre-link an automation account, this blade dialog will not deploy a link reliabiliy.  You should do this before you create log analytic services. See [Region Mappings](https://docs.microsoft.com/en-us/azure/automation/how-to/region-mappings) for more information.
+    > **NOTE** If you do not pre-link an automation account, this blade dialog will not deploy a link reliability.  You should do this before you create log analytic services. See [Region Mappings](https://docs.microsoft.com/en-us/azure/automation/how-to/region-mappings) for more information.
 
 8. Select all the virtual machines, then select **Enable**.
 9. Navigate back to the **Virtual Machines** blade, again highlight the **paw-1** and **linux-1** virtual machines that were deployed.
@@ -143,6 +144,8 @@ Synopsis: Azure Security Center provides several advanced security and threat de
 5. For the event id, type **5001**, select the latest entry, you should see similar names to all the solutions that are deployed in your Log Analytics workspace including the ones you just added:
 
     ![The event viewer is displayed with the click path highlighted.](./media/eventviewer-operations-mgr-5000.png "Filter the Operations Manager event logs")
+
+> **NOTE** If you do not see any events, check that you removed the Solution targeting in the setups above.
 
 6. Open **Windows Explorer**, browse to **C:\Program Files\Microsoft Monitoring Agent\Agent\Health Service State\Management Packs** folder
 

@@ -102,6 +102,8 @@ InstallAzPowerShellModule
 
 InstallGit
 
+InstallPutty
+
 InstallChrome
         
 InstallAzureCli

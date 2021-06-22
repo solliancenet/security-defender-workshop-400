@@ -139,7 +139,11 @@ DisableInternetExplorerESC
 
 EnableIEFileDownload
 
+InstallChocolaty
+
 InstallAzPowerShellModule
+
+InstallChrome
 
 InstallDocker
 

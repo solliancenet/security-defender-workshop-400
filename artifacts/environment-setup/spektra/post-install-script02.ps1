@@ -139,10 +139,13 @@ DisableInternetExplorerESC
 
 EnableIEFileDownload
 
+InstallChocolaty
+
 InstallAzPowerShellModule
-#InstallAzPowerShellModuleMSI
 
 InstallGit
+
+InstallChrome
         
 InstallAzureCli
 

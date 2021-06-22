@@ -102,8 +102,6 @@
 9. Leave the selected workbook location, select **OK**
 10. Select **View saved workbook**
 
-    > **NOTE** You would need to have completed the Web Application Gateway/Application Firewall lab in order to see events in this workbook.
-
 ## Exercise 4 : Azure Sentinel Hunting
 
 1. In the Azure Sentinel blade, select **Hunting**
@@ -292,7 +290,23 @@
 
 11. Run the remaining cells, you will make calls to the external API providers to enrich the log data with threat levels and IP Address analysis
 
-## Exercise 9 : Extending Azure Sentinel Incidents (Optional)
+## Exercise 9 : Export Log Analytics data to Azure Event Hub
+
+TODO
+
+### Task 1 : Create Export Rule
+
+1. TODO
+
+### Task 2 : Review data
+
+1. TODO
+
+### Task 3 : Query data with Notebooks
+
+1. TODO
+
+## Exercise 10 : Extending Azure Sentinel Incidents (Optional)
 
 This task requires registration to gain access to an API Key. It can take a few days to do this action.
 

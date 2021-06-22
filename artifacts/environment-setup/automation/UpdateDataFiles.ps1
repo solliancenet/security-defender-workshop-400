@@ -44,6 +44,7 @@ UpdateFile "./day-02/Attack_linux.ps1" $ht;
 UpdateFile "./day-02/Attack_windows.ps1" $ht;
 UpdateFile "./day-02/Enumerate.ps1" $ht;
 UpdateFile "./day-02/CreateIncident.ps1" $ht;
+UpdateFile "./day-02/Azure Sentinel ML.ipynb" $ht;
 UpdateFile "./day-02/ExportLogsToStorage.ipynb" $ht;
 UpdateFile "./day-02/ExportLogsToStorage.ps1" $ht;
 UpdateFile "./day-02/storage_post.json" $ht;

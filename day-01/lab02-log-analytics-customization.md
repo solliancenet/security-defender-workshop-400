@@ -1,4 +1,4 @@
-# # Azure Security Center + Azure Defender Setup : Lab 2 : Log Analytics Customization
+# Azure Security Center + Azure Defender Setup : Lab 2 : Log Analytics Customization
 
 This lab will walk you through how to create custom logs in your host machines and then send those custom logs to Azure Log Analytics.
 

@@ -43,6 +43,7 @@ $ht.add("#WORKSHOP_NAME#", "#IN_WORKSHOP_NAME#");
 UpdateFile "./day-01/logfile.txt" $ht;
 UpdateFile "./day-01/logs.json" $ht;
 UpdateFile "./day-01/logs2.json" $ht;
+UpdateFile "./day-01/DataCollector.ps1" $ht;
 
 UpdateFile "./day-02/Attack_linux.ps1" $ht;
 UpdateFile "./day-02/Attack_windows.ps1" $ht;
@@ -55,7 +56,6 @@ UpdateFile "./day-02/storage_post.json" $ht;
 UpdateFile "./day-02/incident_post.json" $ht;
 
 UpdateFile "./day-02/logfile.txt" $ht;
-UpdateFile "./day-02/DataCollector.ps1" $ht;
 UpdateFile "./day-02/host_logins.csv" $ht;
 UpdateFile "./day-02/logs.json" $ht;
 UpdateFile "./day-02/Azure Sentinel ML.ipynb" $ht;

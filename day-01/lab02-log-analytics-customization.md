@@ -46,26 +46,9 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 > **Note** If you get an error, browse to the **wssecuritySUFFIX-linux-1** virtual machine and start it and attempt to connect again.
 
-### Task 3: Install and Configure MMA Agent Manually
+### Task 3: Generate some log data
 
-1. In the **Paw-1** virtual machine, copy the **c:\lab files\security-workshop\artifacts/logs-01** folder contents to the **c:\logs** folder
-2. Browse to the log analytics workspace
-3. Under **Settings**, select **Agents Management**
-4. On the windows servers tab, select **Download Windows Agent (64bit)**, the installer will begin to download.
-5. Execute the **MMASetup-AMD64.exe** installer
-6. Select **Next**
-7. Select **I Agree**
-8. Select **Next**
-9. Select the **Connect the agent to Azure Log Analytics (OMS)**
-10. Select **Next**
-11. From the Azure portal, copy the workspace ID and primary key
-12. Select **Next**
-13. Select **Next**
-14. Select **Install**
-15. Select **Finish**
-16. Wait 5-10 minutes for the agent to initialize and start sending event data to the workspace, you should be able to refresh the Agents Management page to see **1 Windows computers connected**
-
-    > **NOTE** If you do not see data flowing after about 5 minutes, repeat the steps above for adding the virtual machine as a data source similar to the **wssecuritySUFFIX-linux-1** machine
+1. In the **Paw-1** virtual machine, copy the **c:\lab files\security-defender-workshop-400\artifacts\day-01\logs-01** folder contents to the **c:\logs** folder
 
 ### Task 4: Setup Sysmon
 
@@ -169,7 +152,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 1. Open a PowerShell ISE windows
 
-2. Open the `C:\labFiles\security-workshop\artifacts\DataCollector.ps1` script. Review the script, notice we have replaced the workspace ID and Key for you. Also notice the script uploads a JSON file to the Log Analytics REST API for custom logging purposes.
+2. Open the `C:\labFiles\security-defender-workshop-400\artifacts\day-01\DataCollector.ps1` script. Review the script, notice we have replaced the workspace ID and Key for you. Also notice the script uploads a JSON file to the Log Analytics REST API for custom logging purposes.
 
 3. Run the script, press **F5**
 

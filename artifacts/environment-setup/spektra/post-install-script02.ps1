@@ -104,6 +104,8 @@ InstallGit
 
 InstallPutty
 
+InstallFiddler
+
 InstallChrome
         
 InstallAzureCli

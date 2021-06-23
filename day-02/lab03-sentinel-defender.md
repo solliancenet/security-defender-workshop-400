@@ -54,6 +54,7 @@
 5. For the **Azure Defender plans**, select **Enable all**
 6. Select the **Azure Defender on** box, then select **Enable all**
 7. Select **Save**
+8. Select **Enable** to create incidents
 
 ### Task 3: Enable Microsoft 365 Defender
 

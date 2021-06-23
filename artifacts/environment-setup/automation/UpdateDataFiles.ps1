@@ -26,6 +26,7 @@ $ht.add("#YESTERDAY#",[DateTime]::NOW.AddDays(-1).ToString("yyyy-MM-dd"));
 $ht.add("#TWODAYSAGO#",[DateTime]::NOW.AddDays(-2).ToString("yyyy-MM-dd"));
 $ht.add("#TIMESTAMP#",[DateTime]::NOW.tostring("yyyy-MM-dd HH:MM:SS"));
 $ht.add("#USERNAME#", "#IN_USERNAME#");
+$ht.add("#PASSWORD#", "#IN_PASSWORD#");
 $ht.add("#WORKSPACE_NAME#", "#IN_WORKSPACE_NAME#");
 $ht.add("#STORAGE_ACCOUNT_NAME#", "#IN_STORAGE_ACCOUNT_NAME#");
 $ht.add("#WORKSPACE_ID#", "#IN_WORKSPACE_ID#");

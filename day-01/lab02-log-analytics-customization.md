@@ -138,6 +138,9 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
     ![IP Field Extraction.](./media/loganalytics-ip-customfield.png "IP Field Extraction")
 
 16. Select **Save extraction**
+
+    > **Note** Custom fields will not be applied to any data that already been collected
+
 17. Copy the **c:\lab files\security-workshop\artifacts/logs-02** folder contents to the **c:\logs** folder
 18. Run the following query to show data based on a specific IP address:
 
@@ -166,7 +169,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
     OrgSecurity_CL
     ```
 
-    ![OrgSecurity query results.]./(media/orgsecurity-results.png "OrgSecurity query results")
+    ![OrgSecurity query results.](./media/orgsecurity-results.png "OrgSecurity query results")
 
 ## Exercise 2: Diagnostic Logging to Log Analytics
 

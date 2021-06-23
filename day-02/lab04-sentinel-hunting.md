@@ -46,18 +46,47 @@ You will execute an attack on your paw virtual machine that will do some not so 
 
 The previous exercise created a breach in a system in your environment. You will need to determine what happened and determine what remediation can be done (if any).
 
-### Task 1: Review Incidents
+### Task 1: Review Alerts
+
+1. Open Azure Security Center
+2. Under **General**, select **Security alerts**
+3. Select the first alert called **Potential attempt to bypass AppLocker detected**
+
+  ![Azure Security Center alerts.](./media/azure_security_center_alerts.png "Select the first alert")
+
+4. Select **View full details**
+
+  ![Review an alert.](./media/azure_security_center_alert1.png "Review an alert")
+
+5. Review the alert details
+
+  ![Review an alert.](./media/azure_security_center_alert1_details.png "Review an alert")
+
+6. Can you answer the following questions?
+   1. What host did the alert come from?
+   2. Who is the user related?
+   3. What kind of attack do you think it is?
+   4. Where did it come from?
+
+### Task 2: Go Hunting
+
+1. Under Threat Management, select **Hunting**
+2. Select **Run all queries**
+3. Sort by results delta, review any items that look suspicious
+
+### Task 3: Review Incidents
 
 1. Open Azure Sentinel
 2. Under Threat Management, select **Incidents**
-3. Review the Incidents, find any that were recently created (as of when you ran the above attack script)
-4. For each incident, select it and then assign yourself (the lab account)
+3. Do you see any new incidents?
+4. Review the Incidents, find any that were recently created (as of when you ran the above attack script)
+5. For each incident, select it and then assign yourself (the lab account)
 
-### Task 2: Review Investigation Graphs
+### Task 4: Review Investigation Graphs
 
 1. For each incident, select it, then select **Investigate**, this will display the investigation graph
 
-> **Note** You'll only be able to investigate the incident if you used the entity mapping fields when you set up your analytics rule. The investigation graph requires that your original incident includes entities. Azure Sentinel currently supports investigation of incidents up to 30 days old.
+  > **Note** You'll only be able to investigate the incident if you used the entity mapping fields when you set up your analytics rule. The investigation graph requires that your original incident includes entities. Azure Sentinel currently supports investigation of incidents up to 30 days old.
 
 2. Review the items that are displayed
 3. Hover over each entity type, then review the options available to you for that entity type
@@ -66,27 +95,21 @@ The previous exercise created a breach in a system in your environment. You will
 
 4. Select **Related alerts**, notice any other items are added to the graph
 
-### Task 3: Review Alert Timelines
+### Task 5: Review Alert Timelines
 
 1. Select the **Timeline** toggle on the right, you should now see the series of alerts and the order in which they were fired
 
-### Task 4: Troubleshoot with KQL
+### Task 6: Troubleshoot with KQL
 
 1. TODO.
 
-### Task 5: Go Hunting
-
-1. Open Azure Sentinel
-2. Under Threat Management, select **Hunting**
-3. 
-
-### Task 6: Ask questions
+### Task 7: Answer the Questions
 
 1. Who caused the attack to occur?
 2. What entities were involved?
 3. What was the steps of the attack?
 
-### Task 7: Close the Incidents
+### Task 8: Close the Incidents
 
 1. For each incident, select it, then select the appropriate status (`closed`) with a classification (`true positive`).
 2. For the comment, type `User error in judgement`.

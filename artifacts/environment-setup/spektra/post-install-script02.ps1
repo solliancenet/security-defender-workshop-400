@@ -226,6 +226,11 @@ foreach ($singleFile in $singleFiles.Keys)
   & $azCopyCommand copy $source $destination 
 }
 
+. "c:\labfiles\$workshopName\artifacts\environment-setup\automation\EncryptHelper.ps1"
+
+#create some files...
+CreateFiles 100;
+
 sleep 20
 
 Stop-Transcript

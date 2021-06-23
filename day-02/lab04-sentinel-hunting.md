@@ -12,19 +12,6 @@
 
 ## Notes
 
-- supply chain attack?
-  - modify container image
-  - upload a bitcoin miner image?
-
-- Execute a brute force attack...concurrent with phishing attack...
-- Send email with word document
-- embed macro in word document
-- have execute powershell script
-- download mimikatz
-- lateral movement
-- encrypt some files in hosts
-- set some registry keys
-
 - create custom incident?
 
 ## Exercise 1: Execute Attack

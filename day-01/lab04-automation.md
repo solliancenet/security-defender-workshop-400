@@ -111,10 +111,10 @@ Add-HybridRunbookWorker –GroupName $groupName -Url $url -Key $key;
 
 ### Task 5: Configure an Alert / Incident
 
-1. 1. Open the Azure Portal in your **paw-1** virtual machine
+1. Open the Azure Portal in your **paw-1** virtual machine
 2. Select **Azure Sentinel**
 
-    ![Azure Sentinel is highlighted.](media/sentinel-browse.png "Browse to Azure Sentinel")
+    ![Azure Sentinel is highlighted.](./media/sentinel-browse.png "Browse to Azure Sentinel")
 
 3. Select **+ New**
 4. Select the **wssecuritySUFFIX** log analytics workspace, then select **Add**

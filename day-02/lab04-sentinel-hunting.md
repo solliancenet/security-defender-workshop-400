@@ -101,13 +101,31 @@ The previous exercise created a breach in a system in your environment. You will
 
 ### Task 6: Troubleshoot with KQL
 
-1. TODO.
+1. What kind of queries do you think you should run to get more details?
+2. Try running the following to look for entity related items
+3. Run the following KQL to find all entries related to a user:
+
+```KQL
+TODO
+```
+
+4. Run the following KQL to find all entries related to a device:
+
+```KQL
+TODO
+```
+
+5. Run the following KQL to find all entries related to an IP address:
+
+```KQL
+TODO
+```
 
 ### Task 7: Answer the Questions
 
 1. Who caused the attack to occur?
 2. What entities were involved?
-3. What was the steps of the attack?
+3. What were the steps of the attack?
 
 ### Task 8: Close the Incidents
 

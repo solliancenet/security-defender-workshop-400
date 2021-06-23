@@ -28,9 +28,13 @@ function ExecuteDocm()
     #execute the docm (manually)
     SendEmail $username "DataLossReport.docm"
 
-    #add a record somewhere the docm was opened...copy to desktop?
+    #add a record somewhere the docm was opened...copy the word doc to the downloads...
+    $downloadsPath = $env:userprofile + "\Downloads";
+    copy "$path\DataLossReport.docm" "$downloadsPath";
 
-    #create the 
+    #create the password file...
+    $line = "#USERNAME#`t#PASSWORD#";
+    add-content "c:\temp\data.log" $line;
 
     #download the zip file
     $WebClient = New-Object System.Net.WebClient
@@ -106,18 +110,16 @@ mkdir c:\tools -ea SilentlyContinue;
 $path = "C:\labfiles\#WORKSHOP_NAME#\artifacts\day-02";
 cd $path;
 
-#copy the word doc to the downloads...
-$downloadsPath = $env:userprofile + "\Downloads";
-copy "$path\DataLossReport.docm" "$downloadsPath";
-
-$username = "#USERNAME#";
-$password = "#PASSWORD#";
-
 #send the email to the user - another hint...
 SendEmail $username;
 
+#do the attack manually...
+ExecuteDocm
+
+#copy over some "malware" logs
 MoveLogs
 
+#clear the event logs
 clear-all-event-logs
 
 #referece

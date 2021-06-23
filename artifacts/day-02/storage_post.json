@@ -5,6 +5,10 @@
         },
         "tablenames": [
             "AuditLogs",
+            "Alert",
+            "Event",
+            "Heartbeat",
+            "SecurityAlert",
             "SigninLogs" 
         ],
         "enable": true

@@ -33,7 +33,7 @@ You will execute an attack on your paw virtual machine that will do some not so 
 
 ### Task 1: Execute Attack
 
-1. Switch to your **paw-1** virtual machine
+1. Switch to your **wssecuritySUFFIX-paw-1** virtual machine
 2. Open a PowerShell window, run the following, please do not look at the script (it won't help you much anyway):
 
 ```PowerShell
@@ -50,7 +50,7 @@ The previous exercise created a breach in a system in your environment. You will
 
 1. Open Azure Sentinel
 2. Under Threat Management, select **Incidents**
-3. Review the Incidents, find any that were recently created (as of when you ran the above attack)
+3. Review the Incidents, find any that were recently created (as of when you ran the above attack script)
 4. For each incident, select it and then assign yourself (the lab account)
 
 ### Task 2: Review Investigation Graphs

@@ -13,7 +13,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 3. Browse to the **-wssecurity** resource group.
 4. Select the **wssecuritySUFFIX** log analytics workspace.
 
-    ![Log Analytics.](media/loganalyticsworkspace.png "Log Analytics workspace")
+    ![Log Analytics.](./media/loganalyticsworkspace.png "Log Analytics workspace")
 
 5. Under **Settings**, select **Agents Configuration**.
 6. Select **+ Add windows event log**.
@@ -25,12 +25,12 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
     > **NOTE** By default, all configuration changes are automatically pushed to all agents. For Linux agents, a configuration file is sent to the Fluentd data collector.
 
-12. Select **Choose File\Browse** and browse to the **c:\lab files\security-workshop\artifacts/logfile.txt** sample file.
+12. Select **Choose File\Browse** and browse to the **c:\lab files\security-defender-workshop-400\artifacts\day-01\logfile.txt** sample file.
 13. Select **Next**. The Custom Log Wizard will upload the file and list the records that it identifies.
 14. On the `Select record delimiter`, select **Timestamp**
 15. Select **YYYY-MM-DD HH:MM:SS**
 
-    ![Log Analytics add custom log.](media/loganalyticscustomlogs.png "Log Analytics workspace add custom log")
+    ![Log Analytics add custom log.](./media/loganalyticscustomlogs.png "Log Analytics workspace add custom log")
 
 16. Select **Next**
 17. For the log collection paths, select **Windows**, then type **C:\logs\\*.log**
@@ -69,12 +69,12 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 ### Task 4: Setup Sysmon
 
-1. From the **paw-1** virtual machine, unzip the **c:\labfiles\security-workshop\artifacts\sysmon.zip** file
+1. From the **paw-1** virtual machine, unzip the **c:\labfiles\security-workshop\artifacts\day-01\sysmon.zip** file
 2. Right-click it and select **Extract All**, then select **Extract**
 3. Open a command prompt, run the following command:
 
     ```cmd
-    cd c:\labfiles\security-workshop\artifacts\sysmon
+    cd c:\labfiles\security-defender-workshop-400\artifacts\day-01\sysmon
     sysmon -accepteula -I
     ```
 
@@ -91,7 +91,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 5. You should see the **paw-1** machine displayed. If you do not see it, wait for a few more minutes.  Refresh the query until you see the machine displayed as a result.
 
-    ![Paw-1 heartbeat.](media/kql_heartbeat.png "Paw-1 heartbeat is displayed")
+    ![Paw-1 heartbeat.](./media/kql_heartbeat.png "Paw-1 heartbeat is displayed")
 
 6. In the query text area, type the following:
 
@@ -103,7 +103,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 7. You should see the following results, notice the **RawData** column.
 
-    ![Notice the rawdata column.](media/rawdata.png "Note the RawData column")
+    ![Notice the rawdata column.](./media/rawdata.png "Note the RawData column")
 
 8. You can manually break out the information using Kusto functions. Run the following query:
 
@@ -117,7 +117,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
     | summarize count() by Status,Code
     ```
 
-    ![Raw data split.](media/rawdata-split.png "RawData column is split using KQL")
+    ![Raw data split.](./media/rawdata-split.png "RawData column is split using KQL")
 
     > **NOTE** We would like to expand this out without having to parse it so we'll create Custom Fields in the next task.
 
@@ -133,7 +133,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
 3. Select the ellipse to the left of the top property of the record, then select **Extract fields from**.
 
-    ![Raw data extract.](media/rawdata-extractfields.png "Select the ellipses and then Extract fields from option")
+    ![Raw data extract.](./media/rawdata-extractfields.png "Select the ellipses and then Extract fields from option")
 
 4. The Field Extraction Wizard is opened, and the record you selected is displayed in the Main Example column. The custom field will be defined for those records with the same values in the properties that are selected.
 
@@ -142,7 +142,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 7. For the field type, select **Date/Time (ISO 8601 Format)**
 8. Select **Extract**
 
-    ![Create the log date field.](media/rawdata-extractfields_logdate.png "Select the ellipses and then Extract fields from option")
+    ![Create the log date field.](./media/rawdata-extractfields_logdate.png "Select the ellipses and then Extract fields from option")
 
 9. Select the IP part of the raw data
 10. Select **Extract**
@@ -152,7 +152,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 14. For the field type, select **Text**
 15. Select **Extract**
 
-    ![IP Field Extraction.](media/loganalytics-ip-customfield.png "IP Field Extraction")
+    ![IP Field Extraction.](./media/loganalytics-ip-customfield.png "IP Field Extraction")
 
 16. Select **Save extraction**
 17. Copy the **c:\lab files\security-workshop\artifacts/logs-02** folder contents to the **c:\logs** folder
@@ -175,7 +175,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
 
     > **NOTE** It will take a short period (5-10 mins) for the Log Analytics workspace to setup the new schema and then make results available.
 
-    ![New schemas in Log Analytics.](media/loganalytics-kql-customlogs.png "New schemas in Log Analytics")
+    ![New schemas in Log Analytics.](./media/loganalytics-kql-customlogs.png "New schemas in Log Analytics")
 
 4. Run the following query in your log analytics workspace to see the data you just imported:
 
@@ -183,7 +183,7 @@ All of the following tasks (including browsing the Azure Portal) should be perfo
     OrgSecurity_CL
     ```
 
-    ![OrgSecurity query results.](media/orgsecurity-results.png "OrgSecurity query results")
+    ![OrgSecurity query results.]./(media/orgsecurity-results.png "OrgSecurity query results")
 
 ## Exercise 2: Diagnostic Logging to Log Analytics
 
@@ -211,7 +211,7 @@ Almost every Azure resource has the ability to send `control plane` activities t
 
 4. For example, the Azure Automation account has the following items:
 
-    ![Azure Automation account diagnostic settings.](media/loganalytics-diagnosticlogging.png "Diagnostic logging settings example")
+    ![Azure Automation account diagnostic settings.](./media/loganalytics-diagnosticlogging.png "Diagnostic logging settings example")
 
 > **NOTE** Each resource will have different control plane actions that can be logged.  These activities can then be used to create alerts from.
 

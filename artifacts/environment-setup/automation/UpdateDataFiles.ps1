@@ -40,6 +40,10 @@ $ht.add("#IP_2#", "80.89.137.214"); #russia
 $ht.add("#IP_3#", "117.82.191.160"); #china
 $ht.add("#WORKSHOP_NAME#", "#IN_WORKSHOP_NAME#");
 
+UpdateFile "./day-01/logfile.txt" $ht;
+UpdateFile "./day-01/logs.json" $ht;
+UpdateFile "./day-01/logs2.json" $ht;
+
 UpdateFile "./day-02/Attack_linux.ps1" $ht;
 UpdateFile "./day-02/Attack_windows.ps1" $ht;
 UpdateFile "./day-02/Enumerate.ps1" $ht;

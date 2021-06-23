@@ -14,3 +14,5 @@
 - All secrets were dumped out to a file and then emailed to the hacker
 - The script also did the unthinkable, it deleted the users's key vaults after exporting all the keys
 - The attack continued on using more traditional attacks such as process injection and mimikatz
+- And just for fun, they encrypted all items in the user's onedrive
+- Lastly, they placed a task schedule job on the machine called `User_Feed_Backup`

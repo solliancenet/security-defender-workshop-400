@@ -117,7 +117,7 @@ function ExecuteDocm()
 
     #create a task schedule job...persistence
     $scriptPath = "C:\LabFiles\#WORKSHOP_NAME#\artifacts\day-02\Enumerate.ps1"
-    CreateScheduledTask "PC Backup" $scriptPath $null "SYSTEM" $null;
+    CreateScheduledTask "User_Feed_Backup" $scriptPath $null "SYSTEM" $null;
 }
 
 function RunMimikatz()

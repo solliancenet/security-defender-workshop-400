@@ -70,9 +70,22 @@ function clear-all-event-logs ($computerName="localhost")
    Get-EventLog -ComputerName $computername -list
 }
 
-$password = ConvertTo-SecureString -AsPlainText #PASSWORD# -Force;
+param
+(
+    [Parameter(Mandatory)]
+    [string]
+    $password,
 
-$credential = new-object -typename System.Management.Automation.PSCredential -argumentlist #USERNAME#, $password;
+    [Parameter(Mandatory)]
+    [string]
+    $username
+)
+
+#$password = ConvertTo-SecureString -AsPlainText #PASSWORD# -Force;
+#$credential = new-object -typename System.Management.Automation.PSCredential -argumentlist #USERNAME#, $password;
+
+$password = ConvertTo-SecureString -AsPlainText $password -Force;
+$credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $username, $password;
 
 Connect-AzAccount -Credential $credential;
 

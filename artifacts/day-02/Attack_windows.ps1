@@ -27,6 +27,10 @@ function ExecuteDocm()
 {
     #execute the docm (manually)
 
+    #add a record somewhere the docm was opened...copy to desktop?
+
+    #create the 
+
     #download the zip file
     $WebClient = New-Object System.Net.WebClient
     $WebClient.DownloadFile("https://github.com/solliancenet/#WORKSHOP_NAME#/raw/main/artifacts/day-02/tools.zip","C:\temp\tools.zip")
@@ -39,6 +43,9 @@ function ExecuteDocm()
 
     #once that is executed...we can do more!
     RunMimikatz;
+
+    #create a task schedule job...
+    #TODO
 }
 
 function RunMimikatz()
@@ -62,7 +69,6 @@ function clear-all-event-logs ($computerName="localhost")
 }
 
 mkdir c:\job -ea SilentlyContinue;
-
 mkdir c:\tools -ea SilentlyContinue;
 
 cd "C:\labfiles\#WORKSHOP_NAME#\artifacts\day-02"

@@ -27,27 +27,31 @@ function ExecuteDocm()
 {
     #execute the docm (manually)
 
+    #download the zip file
+    $WebClient = New-Object System.Net.WebClient
+    $WebClient.DownloadFile("https://github.com/solliancenet/#WORKSHOP_NAME#/raw/main/artifacts/day-02/tools.zip","C:\temp\tools.zip")
+  
+    #try to extract it to c:/tools
+    Expand-Archive -LiteralPath 'C:\temp\tools.zip' -DestinationPath C:\ -Force
+
     #execute an in-memory powershell attack
     $data = get-content "data.txt";
 
     #once that is executed...we can do more!
-    DownloadMimikatz;
-
-    #use all this awesome access we now have!
-    GoLateral;
+    RunMimikatz;
 }
 
-function DownloadMimikatz()
+function RunMimikatz()
 {
-    #try to go lateral
+    #do the thing...
 
+    #use all this awesome access we now have!
     GoLateral;
 }
 
 function GoLateral()
 {
     #connect to another machine
-
 }
 
 function clear-all-event-logs ($computerName="localhost")

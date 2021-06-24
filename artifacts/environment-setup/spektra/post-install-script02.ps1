@@ -135,7 +135,8 @@ $cred = new-object -typename System.Management.Automation.PSCredential -argument
 Connect-AzAccount -Credential $cred | Out-Null
  
 # Template deployment
-$resourceGroupName = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "ODL-AZDEFEND*" }).ResourceGroupName
+$rg = (Get-AzResourceGroup | Where-Object { $_.ResourceGroupName -like "*AZDEFEND*-02" });
+$resourceGroupName = $rg.ResourceGroupName
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
 $branchName = "main";

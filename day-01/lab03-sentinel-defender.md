@@ -332,7 +332,27 @@ In this exercise you will setup an export rule to send log data to Azure Storage
 6. Switch back to the notebook, replace all the values
 7. Run the notebook
 
-## Exercise 10 : Extending Azure Sentinel Incidents (Optional)
+## Exercise 10 : Exporting Alerts via Logic Apps
+
+You can forward alerts from Sentinel to other SIEMs using the Sentinel APIs and Logic Apps.
+
+### Task 1 : Review the export logic app
+
+1. Open the Azure Portal
+2. Browse to your lab resource group
+3. Select the `get-sentinelalertsevidence` logic app
+4. Select **Edit**
+5. Review the steps of the logic app, notice that is exports data from Sentinel and then forwards it to an Event Hub
+
+> **NOTE** Most SIEMS can consume data from Event Hubs. Reference the following:
+
+- [ArcSight](https://community.microfocus.com/t5/ArcSight-Connectors/SmartConnector-for-Microsoft-Azure-Monitor-Event-Hub/ta-p/1671292)
+- [LogRhythm](https://docs.logrhythm.com/docs/OCbeats/azure-event-hubs-beat-6-0-2)
+- [McAfee](https://docs.mcafee.com/bundle/enterprise-security-manager-data-sources-configuration-reference-guide/page/GUID-B5374BE7-10DF-4869-B189-456E62072398.html)
+- [QRadar](https://www.ibm.com/support/knowledgecenter/SS42VS_DSM/com.ibm.dsm.doc/t_dsm_guide_microsoft_azure_enable_event_hubs.html)
+- [Splunk](https://docs.splunk.com/Documentation/AddOns/released/MSCloudServices/Configureeventhubs)
+
+## Exercise 11 : Extending Azure Sentinel Incidents (Optional)
 
 This task requires registration to gain access to an API Key. It can take a few days to do this action.
 

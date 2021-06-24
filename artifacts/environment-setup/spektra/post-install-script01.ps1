@@ -163,7 +163,7 @@ $content | Set-Content -Path "$($parametersFile).json";
 Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "$($parametersFile).json"
 
-cd './$workshopName/artifacts/environment-setup/automation'
+cd "./$workshopName/artifacts/environment-setup/automation"
 
 #execute setup scripts
 Write-Host "Executing post scripts." -ForegroundColor Green -Verbose

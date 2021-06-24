@@ -215,18 +215,18 @@ Azure Sentinel has various methods to perform lookups, enabling diverse sources 
 
 1. Open the Azure Portal
 2. Browse to the **wssecuritySUFFIX** Log Analytics portal
-3. Run the following kql query:
+3. Run the following kql query, be sure to replace the `SUFFIX`:
 
     ```kql
-    externaldata (UserPrincipalName: string) [h"https://..."] with (ignoreFirstRecord=true)
+    externaldata (UserPrincipalName: string) [h"https://wssecuritySUFFIX.blob.core.windows.net/logs/users.csv"] with (ignoreFirstRecord=true)
     ```
 
 4. Review the results, you should see the user name column displayed.
-5. Run the following query to do a filter based on the externaldata
+5. Run the following query to do a filter based on the `externaldata` method:
 
     ```kql
     let timeRange = 1d;
-    let allowlist = externaldata (UserPrincipalName: string) [h"https://..."] with (ignoreFirstRecord=true);
+    let allowlist = externaldata (UserPrincipalName: string) [h"https://wssecuritySUFFIX.blob.core.windows.net/logs/users.csv"] with (ignoreFirstRecord=true);
     SigninLogs
     | where TimeGenerated >= ago(timeRange)
     // Exclude non-failure types

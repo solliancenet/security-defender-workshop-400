@@ -9,4 +9,4 @@ $workspaceKey = "#WORKSPACE_KEY#";
 
 cd "c:/labfiles/#WORKSHOP_NAME#/artifacts/day-02";
 
-Import-Csv users.csv | Upload-AzMonitorLog.ps1 -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey -LogTypeName 'users_lookup'
+Import-Csv users.csv | ./Upload-AzMonitorLog.ps1 -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey -LogTypeName 'users_lookup'

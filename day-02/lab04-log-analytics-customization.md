@@ -246,6 +246,8 @@ Azure Sentinel has various methods to perform lookups, enabling diverse sources 
 users_lookup
 ```
 
+> **Note** It can take up to 15 minutes for your custom table to be displayed.
+
 ### Task 3: Create query function
 
 1. Switch to your Log Analytics workspace
@@ -264,22 +266,31 @@ users_lookup
     Lookup
     ```
 
-4. In the top navigation, select **Save**
+4. In the top navigation, select **Save->Save as function**
 5. For the name, type **users_lookup**
-6. For the type, select **Function**
-7. For the alias, type **users_lookup**
-8. For the category, select **Functions**
-9. Select **Save**
-10. Run the following query:
+6. For the category, select **Functions**
+7. Select **Save**
+8. Run the following queries to see how to use this new function:
 
 ```KQL
-let allowlist = users_lookup | project UserName
+users_lookup | project UserName
+```
+
+```kql
 let watchlist = users_lookup | where Risk > 90
 ```
 
-### Task 4: Create using Storage Account
+### Task 4: Create Sentinel Watchlist
 
-1. TODO
+1. Browse to Azure Sentinel
+2. Select your lab workspace
+3. Under **Configuration**, select **Watchlists**
+4. Select **Add new**
+5. For the name, type **Users**
+6. For the alias, type **Users**
+7. Select **Next: Source>**
+8. Select **Browse for files**, browse to the `users.csv` file
+9. Select **Next: Review and create**
 
 ## Reference Links
 

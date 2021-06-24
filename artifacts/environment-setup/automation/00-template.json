@@ -101,6 +101,10 @@
     "azureSubscriptionID": "[subscription().subscriptionId]",
     "azureTenantID": "[subscription().tenantId]",
     "rgName": "[resourceGroup().name]",
+    "playbookName":"get-sentinelalertsevidence",
+    "conn_azuresentinel" : "[concat('azure_sentinel-',variables('playbookName'))]",
+    "conn_azuremonitorlogs" : "[concat('azure_monitor-',variables('playbookName'))]",
+    "conn_eventhubs" : "[concat('azure_eventhub-',variables('playbookName'))]",
     "resourceName": "[concat('wssecurity',parameters('uniqueSuffix'))]",
     "automationMap": {
       "eastus": { "region": "East US 2" },
@@ -169,6 +173,45 @@
         }
       }
     },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('conn_azuresentinel')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+                     "displayName": "[variables('azureUsername')]",
+          "customParameterValues": {},
+          "api": {
+              "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
+          }
+      }
+  },
+  {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('conn_azuremonitorlogs')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "displayName": "[variables('azureUsername')]",
+          "customParameterValues": {},
+          "api": {
+              "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuremonitorlogs')]"
+          }
+      }
+  },
+  {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('conn_eventhubs')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "displayName": "[variables('azureUsername')]",
+          "customParameterValues": {},
+          "api": {
+              "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/eventhubs')]"
+          }
+      }
+  },
     {
       "type": "Microsoft.EventHub/namespaces",
       "apiVersion": "2021-01-01-preview",

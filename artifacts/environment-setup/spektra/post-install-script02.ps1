@@ -215,6 +215,7 @@ $singleFiles = @{
   queries = "c:\labfiles\$workshopName\artifacts\day-02\queries.yaml,logs/queries.yaml"
   aad_logons = "c:\labfiles\$workshopName\artifacts\day-02\aad_logons.pkl,logs/aad_logon.pkl"
   host_logins = "c:\labfiles\$workshopName\artifacts\day-02\host_logins.csv,logs/host_logins.csv"
+  user_lookup = "c:\labfiles\$workshopName\artifacts\day-02\users.csv,logs/users.csv"
 }
 
 foreach ($singleFile in $singleFiles.Keys) 

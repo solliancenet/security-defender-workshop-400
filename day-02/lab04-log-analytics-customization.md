@@ -207,6 +207,80 @@ Almost every Azure resource has the ability to send `control plane` activities t
 
 > **NOTE** Each resource will have different control plane actions that can be logged.  These activities can then be used to create alerts from.
 
+## Exercise 3: Implement Lookups
+
+Azure Sentinel has various methods to perform lookups, enabling diverse sources for the lookup data and different ways to process it.
+
+### Task 1: Use externaldata
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** Log Analytics portal
+3. Run the following kql query:
+
+    ```kql
+    externaldata (UserPrincipalName: string) [h"https://..."] with (ignoreFirstRecord=true)
+    ```
+
+4. Review the results, you should see the user name column displayed.
+5. Run the following query to do a filter based on the externaldata
+
+    ```kql
+    let timeRange = 1d;
+    let allowlist = externaldata (UserPrincipalName: string) [h"https://..."] with (ignoreFirstRecord=true);
+    SigninLogs
+    | where TimeGenerated >= ago(timeRange)
+    // Exclude non-failure types
+    | where ResultType !in ("0", "50125", "50140")
+    // Exclude allow-listed users
+    | where UserPrincipalName !in~ (allowlist)
+    ```
+
+### Task 2: Create Custom Table
+
+1. Switch to the **wssecuritySUFFIX-paw-1** virtual machine
+2. Open the `` script in a Windows Powershell ISE window
+3. Press **F5** to run the script
+4. Switch to your Log Analytics workspace, run the following KQL query
+
+```KQL
+users_lookup
+```
+
+### Task 3: Create query function
+
+1. Switch to your Log Analytics workspace
+2. Select **Logs**
+3. Review the following KQL query then run it.  Note how `datatable` is used to create a query time lookup:
+
+    ```KQL
+    let Lookup = datatable (UserName:string,DisplayName:string,Risk: int,Location:dynamic)
+    [
+    'chris@contoso.com','Chris Green',70,'{ "City": "Redmond", "State": "Washintgon", "Country": "US" }',
+    'ben@contoso.com','Ben Andrews',100,'{"City": "Oxford", "State": "Oxfordshare", "Country": "UK" }',
+    'nir@contoso.com','Nir Cohen',50,'{ "City": "Tel-Aviv", "State": "", "Country": "IL" }',
+    'Gabriela@contoso.com','Cynthia Silva',20,'{ "City": "Rio de Janeiro", "State": "Rio de Janeiro", "Country": "BR" }',
+    'melissa@contoso.com','Chandana  Agarwals' ,100,'{ "City": "Mumbai", "State": "Maharashtra", "Country": "IN" }'
+    ];
+    Lookup
+    ```
+
+4. In the top navigation, select **Save**
+5. For the name, type **users_lookup**
+6. For the type, select **Function**
+7. For the alias, type **users_lookup**
+8. For the category, select **Functions**
+9. Select **Save**
+10. Run the following query:
+
+```KQL
+let allowlist = users_lookup | project UserName
+let watchlist = users_lookup | where Risk > 90
+```
+
+### Task 4: Create using Storage Account
+
+1. TODO
+
 ## Reference Links
 
 - [Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/overview)

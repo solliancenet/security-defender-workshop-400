@@ -1,0 +1,27 @@
+let IP = externaldata (Category:string, Indicator:string, Campaign:string)[@"https://wssercuritySUFFIX.blob.storage.azure.com/ip.csv"]
+
+let IP_IoCs = toScalar(IP | summarize  make_list(Indicator));
+
+union isfuzzy=true
+
+(PaloAlto_CL | where Source_IP-S in (IP_IoCs)
+| extend normalizedIP = Source_IP_s, normalizedCategory = Thread_ID_s, normalizedAction = Action_s),
+
+(OfficeActivity | where ClientIP in (IP_IoCs)
+| extend normalizedIP = ClientIP, normalizedCategory = OfficeWorkload, normalizedAction = Operation),
+
+(Akamai | where attackData_clientIP_s in (IP_IoCs)
+| extend normalizedIP = attackData_clientIP_s, normalizedCategory = attackData_ruleTags_s, normalizedAction = attackData_ruleActions_s),
+
+(AWSCloudTrail | where SourceIpAddress in (IP_IoCs)
+| extend normalizedIP = SourceIpAddress, normalizedCategory = EventName, normalizedAction = UserIdentityArn),
+
+(SecurityEvent | where IpAddress in (IP_IoCs)
+| extend normalizedIP = IpAddress, normalizedCategory = TargetUserNaem, normalizedAction = Computer)
+
+| join kind=leftouter IP on $left.normalizedIP == $right.Indicator
+
+| summarize Counter = count(*) by noramlizedIP, normalizedAction, normalizedCategory, Type, Indicator, Campaign, Category
+
+
+

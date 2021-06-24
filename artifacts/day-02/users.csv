@@ -1,0 +1,6 @@
+UserName,DisplayName,Risk,Location
+#USERNAME#,Chris Green,70,"{ ""City"": ""Redmond"", ""State"": ""Washington"", ""Country"": ""US"" }"
+ben@contoso.com,Ben Andrews,100,"{ ""City"": ""Oxford"", ""State"": ""Oxfordshare"", ""Country"": ""UK"" }"
+nir@contoso.com,Nir Cohen,50,"{ ""City"": ""Tel-Aviv"", ""State"": """", ""Country"": ""IL"" }"
+Gabriela@contoso.com,Cynthia Silva,20,"{ ""City"": ""Rio de Janeiro"", ""State"": ""Rio de Janeiro"", ""Country"": ""BR"" }"
+melissa@contoso.com,Chandana  Agarwals ,100,"{ ""City"": ""Mumbai"", ""State"": ""Maharashtra"", ""Country"": ""IN"" }"

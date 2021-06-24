@@ -1072,7 +1072,7 @@
               "autoUpgradeMinorVersion": true,
               "settings": {
                   "fileUris": [
-                  "https://raw.githubusercontent.com/Microsoft/microsoft-defender-workshop-400-public/main/environment-setup/spektra/post-install-script01.ps1"
+                  "https://raw.githubusercontent.com/Microsoft/security-defender-workshop-400/main/environment-setup/spektra/post-install-script01.ps1"
                   ]
               },
               "protectedSettings": {
@@ -1316,7 +1316,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                "https://raw.githubusercontent.com/solliancenet/security-defender-workshop/master/artifacts/environment-setup/automation/spektra/post-install-script02.ps1"
+                "https://raw.githubusercontent.com/solliancenet/security-defender-workshop-400/main/artifacts/environment-setup/spektra/post-install-script02.ps1"
               ]
             },
             "protectedSettings": {

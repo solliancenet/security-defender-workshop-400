@@ -4,6 +4,9 @@ For compliance reasons, Contoso would like to maintain raw and filtered logs for
 
 **Requirements**
 
+* Determine supported and unsupported connectors.
+* Determine the work/effort to migrate.
+* Decide if a hybrid approach is appropriate.
 * Keep raw and filtered logs for longer than 90 days.
 * Remove data after 365 days
 
@@ -23,3 +26,6 @@ Challenges
 
 1. Is it possible to filter raw event and log data before it gets to Azure Sentinel?
 2. How might WWI enrich their data before it gets into Azure Sentinel?
+3. Are all the connectors supported in Log Analytics / Azure Sentinel?
+4. What items will WWI need to migrate from Splunk? Can any of it be automated?
+5. If not all connectors are supported, can they run in a hybrid mode until they are?

@@ -211,6 +211,10 @@ $serverName = $resourceName;
 $dataLakeStorageBlobUrl = "https://"+ $wsName + ".blob.core.windows.net/"
 $dataLakeStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -AccountName $wsName)[0].Value
 $dataLakeContext = New-AzStorageContext -StorageAccountName $wsName -StorageAccountKey $dataLakeStorageAccountKey
+
+$storageContainerName = "sqlimport";
+$sqlImportContainer = New-AzStorageContainer -Permission Container -name $sqlimport -context $dataLakeContext;
+
 $container = New-AzStorageContainer -Permission Container -name "logs" -context $dataLakeContext;
 $destinationSasKey = New-AzStorageContainerSASToken -Container "logs" -Context $dataLakeContext -Permission rwdl
 
@@ -241,7 +245,7 @@ $bacpacFilename = "Insurance.bacpac"
 $startip = "0.0.0.0"
 $endip = "0.0.0.0"
 
-$storageContainerName = "sqlimport";
+
 $databaseName = "Insurance";
 
 Set-AzStorageBlobContent -Container $storagecontainername -File $bacpacFilename -Context $dataLakeContext
@@ -261,7 +265,7 @@ $importRequest = New-AzSqlDatabaseImport -ResourceGroupName $resourceGroupName `
     -StorageUri "https://$storageaccountname.blob.core.windows.net/$storageContainerName/$bacpacFilename" `
     -Edition "Standard" `
     -ServiceObjectiveName "S3" `
-    -AdministratorLogin "$userName" `
+    -AdministratorLogin "wsuser" `
     -AdministratorLoginPassword $(ConvertTo-SecureString -String $password -AsPlainText -Force)
 
 

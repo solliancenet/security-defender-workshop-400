@@ -203,7 +203,11 @@ $azCopyCommand = (Get-ChildItem -Path ".\" -Recurse azcopy.exe).Directory.FullNa
 $azCopyCommand += "\azcopy"
 
 #upload the updated login files to azure storage
-$wsName = "wssecurity" + $deploymentId;
+$resourceName = "wssecurity" + $deploymentId;
+
+$wsName = $resourceName;
+$serverName = $resourceName;
+
 $dataLakeStorageBlobUrl = "https://"+ $wsName + ".blob.core.windows.net/"
 $dataLakeStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -AccountName $wsName)[0].Value
 $dataLakeContext = New-AzStorageContext -StorageAccountName $wsName -StorageAccountKey $dataLakeStorageAccountKey
@@ -230,9 +234,40 @@ foreach ($singleFile in $singleFiles.Keys)
   & $azCopyCommand copy $source $destination 
 }
 
-. "c:\labfiles\$workshopName\artifacts\environment-setup\automation\EncryptHelper.ps1"
+#upload the bacpac file...
+$bacpacFilename = "Insurance.bacpac"
+
+# The ip address range that you want to allow to access your server
+$startip = "0.0.0.0"
+$endip = "0.0.0.0"
+
+$storageContainerName = "sqlimport";
+$databaseName = "Insurance";
+
+Set-AzStorageBlobContent -Container $storagecontainername -File $bacpacFilename -Context $dataLakeContext
+
+#create a database
+
+#allow azure
+$serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName -ServerName $serverName -AllowAllAzureIPs
+
+#deploy the bacpac file...
+$importRequest = New-AzSqlDatabaseImport -ResourceGroupName $resourceGroupName `
+    -ServerName $serverName `
+    -DatabaseName $databaseName `
+    -DatabaseMaxSizeBytes 100GB `
+    -StorageKeyType "StorageAccessKey" `
+    -StorageKey $(Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName).Value[0] `
+    -StorageUri "https://$storageaccountname.blob.core.windows.net/$storageContainerName/$bacpacFilename" `
+    -Edition "Standard" `
+    -ServiceObjectiveName "S3" `
+    -AdministratorLogin "$userName" `
+    -AdministratorLoginPassword $(ConvertTo-SecureString -String $password -AsPlainText -Force)
+
 
 #create some files...
+. "c:\labfiles\$workshopName\artifacts\environment-setup\automation\EncryptHelper.ps1"
+
 CreateFiles 100;
 
 sleep 20

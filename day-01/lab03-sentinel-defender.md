@@ -16,7 +16,7 @@
 6. You should see some previous queries that were run previously
 7. Continue to explore the various Azure Sentinel blade items
 
-    ![Azure Sentinel is displayed.](media/sentinel-view.png "Browse the Sentinel blade")
+    ![Azure Sentinel is displayed.](./media/sentinel-view.png "Browse the Sentinel blade")
 
 ## Exercise 2 : Azure Sentinel Data Sources
 
@@ -25,16 +25,16 @@
 1. In the Azure Sentinel blade, under **Configuration**, select **Data connectors**
 2. Select **Azure Active Directory**
 
-    ![The click path is displayed.](media/sentinel-data-connector-aad.png "Select Azure Active Directory connector")
+    ![The click path is displayed.](./media/sentinel-data-connector-aad.png "Select Azure Active Directory connector")
 
 3. In the side dialog, notice the Data Types that will be imported (`SigninLogs`, `AuditLogs`, etc)
 4. Select **Open connector page**
 
-    ![The click path is displayed.](media/sentinel-data-connector-aad-details.png "Select Azure Active Directory connector")
+    ![The click path is displayed.](./media/sentinel-data-connector-aad-details.png "Select Azure Active Directory connector")
 
     > **NOTE** You would need to have `global administrator` or `security administrator` access to the Azure AD tenant in order to make the connection. Unfortunately in these labs, your lab user does not have this level of access.
 
-    ![The connector page is displayed.](media/sentinel-data-connector-aad-connect.png "Review the connector page screenshot")
+    ![The connector page is displayed.](./media/sentinel-data-connector-aad-connect.png "Review the connector page screenshot")
 
 5. Select all items, then select **Apply Changes**
 

@@ -73,7 +73,7 @@ The previous exercise created a breach in a system in your environment. You will
 
 1. For each incident, select it, then select **Investigate**, this will display the investigation graph
 
-  > **Note** You'll only be able to investigate the incident if you used the entity mapping fields when you set up your analytics rule. The investigation graph requires that your original incident includes entities. Azure Sentinel currently supports investigation of incidents up to 30 days old.
+    > **Note** You'll only be able to investigate the incident if you used the entity mapping fields when you set up your analytics rule. The investigation graph requires that your original incident includes entities. Azure Sentinel currently supports investigation of incidents up to 30 days old.
 
 2. Review the items that are displayed
 3. Hover over each entity type, then review the options available to you for that entity type
@@ -92,21 +92,21 @@ The previous exercise created a breach in a system in your environment. You will
 2. Try running the following to look for entity related items
 3. Run the following KQL to find all entries related to a user:
 
-```KQL
-TODO
-```
+    ```KQL
+    TODO
+    ```
 
 4. Run the following KQL to find all entries related to a device:
 
-```KQL
-TODO
-```
+    ```KQL
+    TODO
+    ```
 
 5. Run the following KQL to find all entries related to an IP address:
 
-```KQL
-TODO
-```
+    ```KQL
+    TODO
+    ```
 
 ### Task 7: Answer the Questions
 

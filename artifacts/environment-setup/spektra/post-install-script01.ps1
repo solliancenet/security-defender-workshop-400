@@ -140,6 +140,8 @@ $resourceGroupName = $rg.ResourceGroupName
 $region = $rg.Location;
 $deploymentId =  (Get-AzResourceGroup -Name $resourceGroupName).Tags["DeploymentId"]
 
+$resourceName = "wssecurity$deploymentId";
+
 $branchName = "master";
 $workshopName = "security-defender-workshop-400";
 $repoUrl = "solliancenet/security-defender-workshop-400";
@@ -163,10 +165,36 @@ $content | Set-Content -Path "$($parametersFile).json";
 #enable azure defender on the subscription - do BEFORE deployment
 EnableAzureDefender
 
+#setup agent provisioning...
+EnableASCAutoProvision
 
+#enable the default policy
+EnableDefaultASCPolicy
+
+#enable the AKS policy
+EnableAKSPolicy
+
+EnableOtherCompliancePolicy $resourceGroupName;
 
 Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "$($parametersFile).json"
+
+#connect the activity log - workspace must exist
+ConnectAzureActivityLog $resourceName $resourceGroupName;
+
+#enable sql vulnerability
+EnableSQLVulnerability $resourceName $resourceName $AzureUserName;
+
+#enable vm vulnerability
+EnableVMVulnerability
+
+#set log analytics config
+SetLogAnalyticsAgentConfig $resourceName $resourceGroupName
+
+DeployAllSolutions resourceName
+
+#enable JIT
+EnableJIT $resourceGroupName;
 
 cd "./$workshopName/artifacts/environment-setup/automation"
 

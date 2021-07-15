@@ -160,6 +160,11 @@ $content = $content | ForEach-Object {$_ -Replace "GET-REGION", $region};
 $content = $content | ForEach-Object {$_ -Replace "ARTIFACTS-LOCATION", "https://raw.githubusercontent.com/$repoUrl/$branchName/artifacts/environment-setup/automation/"};
 $content | Set-Content -Path "$($parametersFile).json";
 
+#enable azure defender on the subscription - do BEFORE deployment
+EnableAzureDefender
+
+
+
 Write-Host "Starting main deployment." -ForegroundColor Green -Verbose
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://raw.githubusercontent.com/solliancenet/$workshopName/$branchName/artifacts/environment-setup/automation/00-template.json" -TemplateParameterFile "$($parametersFile).json"
 
@@ -167,9 +172,6 @@ cd "./$workshopName/artifacts/environment-setup/automation"
 
 #execute setup scripts
 Write-Host "Executing post scripts." -ForegroundColor Green -Verbose
-
-#./01-environment-setup.ps1
-#./03-environment-validate.ps1
 
 sleep 20
 

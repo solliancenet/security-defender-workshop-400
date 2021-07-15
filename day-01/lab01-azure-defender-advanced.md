@@ -8,17 +8,108 @@
 2. Search for Azure Security Center
 3. Select **Azure Defender**
 4. Select **Network Map**
-5. 
+5. Select the **wssecuritySUFFIX-win10** virtual machine node, review the recommendations
+6. Select the **Management ports of virtual machines should be protected with just-in-time network access control** recommendation
+7. Select **Fix**
+8. Select **Save**
+9. Navigate back to the Network map via the bread crumb
+10. Select the **wssecuritySUFFIX-hub** virtual network node, review the recommendations
+11. Select the **DDoS Protection Standard should be enabled** recommendation
+12. Select **Take Action**
+13. Select **Enable**
+14. Select the **wssecuritySUFFIX** protection plan
+15. Select **Save**
 
 ## Exercise 2: Azure Defender KQL Queries
 
-### Task 1: File Integrity
+### Task 1: VM Vulnerability Assessment
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 2: SQL Vulnerability Assessment
 
 1. TODO
 
-### Task 2: File Integrity
+### Task 3: File Integrity
 
-1. TODO
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Expand the **Change Tracking** category/solution, notice the two tables `ConfigurationChange` and `ConfigurationData`
+6. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 4: Container Image Scanning
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 5: Adaptive Application Control
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 6: Adaptive Network Hardening
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 7: JIT VM Access
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
+
+### Task 8: Network Map
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** log analytics workspace
+3. Under **General**, select **Logs**
+4. Close any dialogs
+5. Run the following query:
+
+```kql
+TODO
+```
 
 ## Exercise 3: Continuous Export
 

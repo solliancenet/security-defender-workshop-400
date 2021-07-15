@@ -175,6 +175,15 @@
       }
     },
     {
+      "type": "Microsoft.Network/DDoSProtectionPlans",
+      "apiVersion": "2019-02-01",
+      "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [],
+      "tags": {},
+      "properties": {}
+  },
+    {
       "type": "Microsoft.Web/connections",
       "apiVersion": "2016-06-01",
       "name": "[variables('conn_azuresentinel')]",

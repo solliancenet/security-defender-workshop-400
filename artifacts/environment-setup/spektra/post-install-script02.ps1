@@ -112,6 +112,10 @@ InstallChrome
         
 InstallAzureCli
 
+InstallTor
+
+InstallPowerBI
+
 Uninstall-AzureRm -ea SilentlyContinue
 
 CreateLabFilesDirectory

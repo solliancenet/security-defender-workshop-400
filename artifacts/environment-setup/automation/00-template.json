@@ -183,6 +183,53 @@
       "tags": {},
       "properties": {}
   },
+  {
+    "type": "Microsoft.Network/firewallPolicies",
+    "apiVersion": "2020-11-01",
+    "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+    "tags": {},
+    "properties": {
+        "sku": {
+            "tier": "Standard"
+        }
+    },
+    "resources": []
+},
+{
+  "type": "Microsoft.Network/azureFirewalls",
+  "apiVersion": "2020-05-01",
+  "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+  "dependsOn": [
+      "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/publicIpAddresses', concat(variables('resourceName'),'-fw-pip'))]",
+      "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/virtualNetworks', concat(variables('resourceName'),'-web'))]",
+      "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/firewallPolicies', variables('resourceName'))]"
+  ],
+  "tags": {},
+  "zones": "[variables('zones')]",
+  "properties": {
+      "ipConfigurations": [
+          {
+              "name": "[parameters('publicIpAddressName')]",
+              "properties": {
+                  "subnet": {
+                      "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', concat(variables('resourceName'),'-web'), 'AzureFirewallSubnet')]"
+                  },
+                  "publicIpAddress": {
+                      "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/publicIPAddresses', concat(variables('resourceName'),'-fw-pip'))]"
+                  }
+              }
+          }
+      ],
+      "sku": {
+          "tier": "Standard"
+      },
+      "firewallPolicy": {
+          "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/firewallPolicies', variables('resourceName'))]"
+      }
+  }
+},
     {
       "type": "Microsoft.Web/connections",
       "apiVersion": "2016-06-01",
@@ -1648,6 +1695,22 @@
       }
     },
     {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-fw-pip')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "ipAddress": "52.142.16.152",
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+    {
       "name": "[concat(variables('resourceName'),'-ad')]",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[variables('location')]",
@@ -1811,6 +1874,15 @@
             "name": "default",
             "properties": {
               "addressPrefix": "10.3.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "AzureFirewallSubnet",
+            "properties": {
+              "addressPrefix": "10.3.1.0/24",
               "delegations": [],
               "privateEndpointNetworkPolicies": "Enabled",
               "privateLinkServiceNetworkPolicies": "Enabled"
@@ -2012,6 +2084,20 @@
       ],
       "properties": {
         "addressPrefix": "10.3.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(variables('resourceName'),'-web', '/AzureFirewallSubnet')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('resourceName'), '-web'))]"
+      ],
+      "properties": {
+        "addressPrefix": "10.3.1.0/24",
         "delegations": [],
         "privateEndpointNetworkPolicies": "Enabled",
         "privateLinkServiceNetworkPolicies": "Enabled"

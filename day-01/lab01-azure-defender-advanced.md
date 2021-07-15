@@ -117,6 +117,21 @@ TODO
 
 1. TODO
 
+## Exercise 4: Azure Defender for IoT
+
+### Task 1: Enable Azure Defender for IoT
+
+1. Open the Azure Portal
+2. Browse to the **wssecuritySUFFIX** IoT Hub
+3. Under **Security**, select **Overview**
+4. Select **Enable**, then refresh the page
+5. Select **Settings**
+6. Select **Data Collection**
+7. For the workspace configuration, toggle to **On**
+8. Select the lab subscription
+9. Select the **wssecuritySUFFIX** workspace
+10. Select **Save**
+
 ## Reference Links
 
 - Network Map

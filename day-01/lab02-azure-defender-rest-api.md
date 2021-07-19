@@ -1,27 +1,39 @@
 # Azure Security Center + Azure Defender Setup : Lab 2 : REST APIs
 
-## Exercise 1: Azure Graph Explorer
+## Exercise 1: REST APIs
 
-### Task 1: Azure Graph Explorer
-
-1. TODO
-
-## Exercise 2: REST APIs
-
-### Task 1: Network Map
+### Task 1: Log Analytics
 
 1. TODO
 
-## Exercise 3: Visualize Recommendations with Power BI
+### Task 2: Azure Security Graph
+
+1. TODO
+
+## Exercise 2: Visualize Recommendations with Power BI
 
 ### Task 1: Create KQL Query
 
-1. TODO
+1. Open the Azure Portal
+2. Select **Logs**
+3. Run the following query
+
+```kql
+```
+
+4. Select **Export to Power BI**
+5. 
 
 ### Task 2: Export to Power BI
 
-1. TODO
+1. Open the `Azure Defender.pbix` file
+2. Update the `TODO` value
+3. Press refresh data
+4. When prompted, enter your lab credentials
+5. You should see all the tabs update with Azure Defender related items. Review each tab.
 
 ## Reference Links
 
-- TODO
+- Azure Defender APIs
+- Azure Sentinel APIs
+- Power BI

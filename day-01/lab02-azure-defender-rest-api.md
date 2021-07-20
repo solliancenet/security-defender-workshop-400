@@ -27,10 +27,13 @@
 ### Task 2: Export to Power BI
 
 1. Open the `Azure Defender.pbix` file
-2. Update the `TODO` value
-3. Press refresh data
-4. When prompted, enter your lab credentials
-5. You should see all the tabs update with Azure Defender related items. Review each tab.
+2. Right-click the `Alerts` data source, select **Edit**
+3. Select the `Alerts` data source, in the ribbon, select **Advanced Editor**.
+4. Review the query.  Repeat for all the data sources in the Power BI report.
+5. Update the SubscriptionId, TenantId and WorkspaceId with the lab details
+6. Generate a new `https://management.azure.com` access token, replace it in the report
+7. When prompted, enter your lab credentials
+8. You should see all the tabs update with Azure Defender related items. Review each tab.
 
 ## Reference Links
 

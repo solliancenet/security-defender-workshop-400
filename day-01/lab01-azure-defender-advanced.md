@@ -259,7 +259,7 @@
         ```kql
         AzureActivity
         | where TimeGenerated > ago(30d)
-        | where OperationNameValue == “Microsoft.Security/locations/jitNetworkAccessPolicies/initiate/action”
+        | where OperationNameValue == "Microsoft.Security/locations/jitNetworkAccessPolicies/initiate/action"
         | extend activityStatusValue = toString(Properties d.activityStatusValue)
         | extend eventName = toString(Properties d.eventName)
         | extend Justification = toString(parse json(tostring(Properties d.eventProperties)).Justification)
@@ -276,12 +276,44 @@
 5. Run the following PowerShell script:
 
 ```PowerShell
+. C:\LabFiles\AzureCreds.ps1
 
-$subscriptionId = "REPLACE_ME";
+$userName = $AzureUserName                # READ FROM FILE
+$password = $AzurePassword                # READ FROM FILE
+$clientId = $TokenGeneratorClientId       # READ FROM FILE
+$global:sqlPassword = $AzureSQLPassword          # READ FROM FILE
+
+$securePassword = $password | ConvertTo-SecureString -AsPlainText -Force
+$cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $SecurePassword
+
+Connect-AzAccount -Credential $cred | Out-Null
+
+$azToken = Get-AzAccessToken;
+$token = $azToken.Token;
+$global:loginDomain = $azToken.TenantId;
+
+$ropcBodyCore = "client_id=$($clientId)&username=$($userName)&password=$($password)&grant_type=password"
+$global:ropcBodyManagement = "$($ropcBodyCore)&scope=https://management.azure.com/.default"
+
+$result = Invoke-RestMethod  -Uri "https://login.microsoftonline.com/$($global:logindomain)/oauth2/v2.0/token" `
+    -Method POST -Body $global:ropcBodyManagement -ContentType "application/x-www-form-urlencoded"
+
+$global:managementToken = $result.access_token
+
+$sub = Get-AzSubscription
+$subscriptionId = $sub.Id;
 
 $url = "https://management.azure.com/subscriptions/$subscriptionId/providers/Microsoft.Security/topologies?includeResourceInformation=true&api-version=2015-06-01-preview"
 
+$result = Invoke-RestMethod  -Uri $url -Method Get -ContentType "application/json" -Headers @{"Authorization"="Bearer $managementToken"};
+
+$result;
+
 $url = "https://management.azure.com/subscriptions/$subscriptionId/providers/Microsoft.Security/allowedConnections?api-version=2015-06-01-preview";
+
+$result = Invoke-RestMethod  -Uri $url -Method Get -ContentType "application/json" -Headers @{"Authorization"="Bearer $managementToken"};
+
+$result;
 ```
 
 ## Exercise 3: Continuous Export
@@ -291,22 +323,31 @@ $url = "https://management.azure.com/subscriptions/$subscriptionId/providers/Mic
 1. Browse to Azure Security Center
 2. Under **Management**, select **Pricing and settings**
 3. Select the lab subscription
+
+    ![Pricing and settings.](./media/pricing_settings_subscription.png "Pricing and settings is displayed.")
+
 4. Under **Settings**, select **Continuous export**
 5. Select **Log Analytics workspace**
-6. Select **Save**
+6. Check all the **Exported data types** checkboxes
+7. Select the ***-security** resource group
+8. For the target workspace, select **wssecuritySUFFIX**
+
+    ![Continuous export configuration.](./media/continuous_export_config.png "Continuous export configuration is displayed.")
+
+9. Select **Save**
 
     > **Note** You can also deploy continuos export using Azure Policy
 
-7. Browse to the **wssecuritySUFFIX** log analytics workspace
-8. Under **General**, select **Logs**
-9. Close any dialogs
-10. Run the following query to query for security alerts:
+10. Browse to the **wssecuritySUFFIX** log analytics workspace
+11. Under **General**, select **Logs**
+12. Close any dialogs
+13. Run the following query to query for security alerts:
 
     ```kql
     SecurityAlert
     ```
 
-11. Run the following query to query for security recommendations:
+14. Run the following query to query for security recommendations:
 
     ```kql
     SecurityRecommendation
